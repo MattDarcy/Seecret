@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7701" systemVersion="14F27" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Acquaintance" representedClassName="PRODUCT_MODULE_NAME.Acquaintance" syncable="YES">
+        <attribute name="acqAdminBool" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="acqDisplayName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="acqImage" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="acqObjectId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="acqUsername" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="chatAcquaintance" optional="YES" maxCount="1" deletionRule="Deny" destinationEntity="Chat" inverseName="chatAcquaintance" inverseEntity="Chat" syncable="YES"/>
+    </entity>
+    <entity name="Chat" representedClassName="PRODUCT_MODULE_NAME.Chat" syncable="YES">
+        <attribute name="chatObjectId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="chatTitle" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="chatAcquaintance" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Acquaintance" inverseName="chatAcquaintance" inverseEntity="Acquaintance" syncable="YES"/>
+        <relationship name="chatMessage" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Message" inverseName="chatMessage" inverseEntity="Message" syncable="YES"/>
+    </entity>
+    <entity name="Friend" representedClassName="Friend" syncable="YES">
+        <attribute name="friendDisplayName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="friendObjectId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="friendPhoto" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="friendUsername" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Login" representedClassName="Login" syncable="YES">
+        <attribute name="password" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Message" representedClassName="Message" syncable="YES">
+        <attribute name="chatObjectId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="createdAt" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="messageText" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="senderObjectId" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="chatMessage" optional="YES" maxCount="1" deletionRule="Deny" destinationEntity="Chat" inverseName="chatMessage" inverseEntity="Chat" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Acquaintance" positionX="-54" positionY="-639" width="128" height="133"/>
+        <element name="Chat" positionX="133" positionY="-594" width="128" height="103"/>
+        <element name="Friend" positionX="133" positionY="-837" width="128" height="105"/>
+        <element name="Message" positionX="315" positionY="-612" width="128" height="118"/>
+        <element name="Login" positionX="135" positionY="-684" width="128" height="75"/>
+    </elements>
+</model>
