@@ -12,7 +12,7 @@
 
 
 import UIKit
-import Parse
+
 class settingsVC: UIViewController {
     
     @IBOutlet weak var logoutBtn: UIButton!

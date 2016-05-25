@@ -16,15 +16,38 @@
 
 
 import UIKit
-import Parse
+import CoreData
+
 let userObjectID = PFUser.currentUser()!.objectId!
 let userName = PFUser.currentUser()!.username!
 
 //NSFetchedResultsControllerDelegate for CoreData
-class friendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class friendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, NSFetchedResultsControllerDelegate {
     
     var cellIndexPath:Int = -1
     
+    /***********************************************************************************************
+    //MARK: Core Data Context, nItem, and newItem()
+    ***********************************************************************************************/
+    let context:NSManagedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext!
+    var nItem : Friend? = nil
+    
+    var frc:NSFetchedResultsController = NSFetchedResultsController()
+    
+    func getFetchResultsController() -> NSFetchedResultsController {
+        frc = NSFetchedResultsController(fetchRequest: ListFetchRequest(), managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        return frc
+    }
+
+    func ListFetchRequest() -> NSFetchRequest {
+        let fetchRequest = NSFetchRequest(entityName: "Friend")
+        //sorts list by alphabetical item
+        let sortDescriptor = NSSortDescriptor(key: "friendDisplayName", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        return fetchRequest
+    }
+    
+    var coreDataContent:Bool = false
     var didLoad:Bool = false
     var i = 0
     var j = 0
@@ -37,6 +60,10 @@ class friendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     var resultsImageFiles = [PFFile]()
     
     func preTreatView() {
+        //assign for CoreData
+        frc = getFetchResultsController()
+        frc.delegate = self
+        try! frc.performFetch()
         
         /***********************************************************************************************
         //MARK: Hide back button and show title on tab view
@@ -49,7 +76,7 @@ class friendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         ***********************************************************************************************/
         let button: UIBarButtonItem = UIBarButtonItem()
         button.image = UIImage(named: "hamburger")
-        button.target = targetForAction(Selector(""), withSender: nil)
+        button.target = targetForAction("", withSender: nil)
         self.tabBarController?.navigationItem.rightBarButtonItem = button
     }
     
@@ -69,44 +96,67 @@ class friendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         resultsDisplayNameArray.removeAll(keepCapacity: false)
         resultsImageFiles.removeAll(keepCapacity: false)
         
+        if coreDataContent == true {
+            //fill the table with friends data from coredata
+            print("I will not get more data from Parse for friends.")
+        } else {
             /***********************************************************************************************
             //MARK: Query friends list for current user, then individual friends' data, save to CoreData and reload
             ***********************************************************************************************/
             var predicate = NSPredicate(format: "userObjectId = '"+userObjectID+"'")
             var query = PFQuery(className: "Friends", predicate: predicate)
             query.findObjectsInBackgroundWithBlock {
-                (objects, error) -> Void in
+                (objects:[AnyObject]?, error:NSError?) -> Void in
                 if let objs = objects {
                     for object in objs {
                         self.resultsObjectIdsArray = (object["friendsObjectIds"] as! Array!)
                         self.resultsDisplayNameArray = (object["friendsDisplayNames"] as! Array!)
                     }
                 }
-                for _ in 0...self.resultsObjectIdsArray.count {
+                for (self.i = 0; self.i < self.resultsObjectIdsArray.count; self.i++) {
                     predicate = NSPredicate(format: "objectId = '"+self.resultsObjectIdsArray[self.i]+"'")
                     query = PFQuery(className: "_User", predicate: predicate)
                     query.findObjectsInBackgroundWithBlock({
-                        (objects, error) -> Void in
+                        (objects:[AnyObject]?, error:NSError?) -> Void in
                         if let objs = objects {
                             for object in objs {
-                                self.resultsUsernameArray.append(object["username"] as! String!)
+                                self.resultsUsernameArray.append(object.username! as String!)
                                 self.resultsImageFiles.append(object["photo"] as! PFFile)
+                                
+                                let context = self.context
+                                let ent = NSEntityDescription.entityForName("Friend", inManagedObjectContext: context)
+                                let nItem2 = Friend(entity: ent!, insertIntoManagedObjectContext: context)
+                                
+                                var name = self.resultsDisplayNameArray[self.j]
+                                nItem2.friendDisplayName = self.resultsDisplayNameArray[self.j]
+                                nItem2.friendObjectId = self.resultsObjectIdsArray[self.j]
+                                print("friendDisplayName saved in data is \(nItem2.friendDisplayName)")
+                                print("friendObjectId saved in data is \(nItem2.friendObjectId)")
+                                
+                                nItem2.friendUsername = object.username! as String!
+                                print("friendUsername saved in data is \(nItem2.friendUsername)")
                                 
                                 let userImageFile = object["photo"] as! PFFile
                                 userImageFile.getDataInBackgroundWithBlock({
                                     (imageData:NSData?, error:NSError?) -> Void in
                                     if error == nil {
-                                        let _ = UIImage(data: imageData!)
-                                        
+                                        let image = UIImage(data: imageData!)
+                                        nItem2.friendPhoto = UIImagePNGRepresentation(image!)!
+                                        self.coreDataContent = true
+                                        do {
+                                            try context.save()
+                                        } catch {
+                                            print("problem");
+                                        }
                                     }
                                 })
-                                self.j += 1
+                                self.j++
                             }
                         }
                     })
                 }
             }
-        
+        }
     }
 
     
@@ -125,17 +175,21 @@ class friendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        _ = tableView.cellForRowAtIndexPath(indexPath) as! friendsCell
+        var cell = tableView.cellForRowAtIndexPath(indexPath) as! friendsCell
         cellIndexPath = indexPath.row
         self.performSegueWithIdentifier("goToConversationVC", sender: self)
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return resultsObjectIdsArray.count
+        //return resultsObjectIdsArray.count
+        
+        let numberOfRowsInSection = frc.sections?[section].numberOfObjects
+        return numberOfRowsInSection!
     }
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 1
+        let numberOfSections = frc.sections?.count
+        return numberOfSections!
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
@@ -155,7 +209,19 @@ class friendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         //}
         
         cellIndexPath = indexPath.row
-
+        
+        if let friend = frc.objectAtIndexPath(indexPath) as? Friend {
+            print("nItem has contents")
+            coreDataContent = true
+            cell.profileNameLbl?.text = friend.friendDisplayName
+            cell.profileImg?.image = UIImage(data: (friend.friendPhoto))
+            
+            resultsObjectIdsArray.append(friend.friendObjectId)
+            resultsDisplayNameArray.append(friend.friendDisplayName)
+            print("I retrieved from coredata resultsObjectIdsArray \(resultsObjectIdsArray) and resultsDisplayNameArray \(resultsDisplayNameArray)" )
+            
+        }
+        
         print("friendObjectIdArray is now \(resultsObjectIdsArray)")
         
         return cell
@@ -165,6 +231,14 @@ class friendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 //MARK: Swipe left to delete
 ***********************************************************************************************/
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        let managedObject: NSManagedObject = frc.objectAtIndexPath(indexPath) as! NSManagedObject
+        context.deleteObject(managedObject)
+        do {
+            try context.save()
+        } catch {
+            print("problem");
+        }
+        
         
         
         /*
@@ -208,6 +282,9 @@ class friendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         self.navigationItem.hidesBackButton = true
     }
     
+    func controllerDidChangeContent(controller: NSFetchedResultsController) {
+        resultsTable.reloadData()
+    }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

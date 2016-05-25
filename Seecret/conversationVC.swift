@@ -13,7 +13,7 @@
 
 import UIKit
 import Bolts
-import Parse
+
 var userDisplayName = ""
 
 var chatExistsFlag = false
@@ -88,20 +88,20 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
     
     @IBAction func addAngry(sender: AnyObject) {
         var angry:Int = Int(angryQty.text!)!
-        angry += 1
+        angry++
         angryQty.text = String(stringInterpolationSegment: angry)
     }
     
     @IBAction func addHappy(sender: AnyObject) {
         var happy:Int = Int(happyQty.text!)!
-        happy += 1
+        happy++
         happyQty.text = String(stringInterpolationSegment: happy)
     }
     
     
     @IBAction func addSad(sender: AnyObject) {
         var sad:Int = Int(sadQty.text!)!
-        sad += 1
+        sad++
         sadQty.text = String(stringInterpolationSegment: sad)
     }
     
@@ -120,11 +120,11 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
 /***********************************************************************************************
 //MARK: Add hamburger menu button
 ***********************************************************************************************/
-        let button:UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "hamburger.png"), style: UIBarButtonItemStyle.Plain, target:self, action: #selector(conversationVC.burgerBtnPress))
+        let button:UIBarButtonItem = UIBarButtonItem(image: UIImage(named: "hamburger.png"), style: UIBarButtonItemStyle.Plain, target:self, action: "burgerBtnPress")
         
         self.navigationItem.rightBarButtonItem = button
         
-        let backItem = UIBarButtonItem(title: "", style: .Plain, target: nil, action: nil)
+        let backItem = UIBarButtonItem(title: "", style: .Bordered, target: nil, action: nil)
         navigationItem.backBarButtonItem = backItem
     }
 
@@ -173,7 +173,7 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
         var predicate = NSPredicate(format: "objectId = '"+userObjectID+"'")
         var query = PFQuery(className: "_User", predicate: predicate)
         query.findObjectsInBackgroundWithBlock({
-            (objects, error) -> Void in
+            (objects:[AnyObject]?, error:NSError?) -> Void in
             if let objs = objects {
                 for object in objs {
                     userDisplayName = (object["displayName"] as! String!)
@@ -185,7 +185,7 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
                 predicate = NSPredicate(format: "objectId = '"+self.otherUserId+"'")
                 query = PFQuery(className: "_User", predicate: predicate)
                 query.findObjectsInBackgroundWithBlock({
-                    (objects, error) -> Void in
+                    (objects:[AnyObject]?, error:NSError?) -> Void in
                     if let objs = objects {
                         for object in objs {
                             self.otherDisplayName = (object.objectForKey("displayName") as! String)
@@ -223,7 +223,7 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
                             query.whereKey("objectId", equalTo: self.chatObjIdFromSeecretsTab)
                         }
                         query.findObjectsInBackgroundWithBlock {
-                            (objects, error) -> Void in
+                            (objects:[AnyObject]?, error:NSError?) -> Void in
                             if let test = objects {
                                 //println("objects is \(test)")
                                 if test.count == 0 {
@@ -244,7 +244,7 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
                                                 predicate = NSPredicate(format: "objectId = '"+userObjectID+"'")
                                                 let chatObj2 = PFQuery(className: "_User", predicate: predicate)
                                                 chatObj2.findObjectsInBackgroundWithBlock({
-                                                    (objects, error) -> Void in
+                                                    (objects:[AnyObject]?, error:NSError?) -> Void in
                                                     if error == nil {
                                                         if let objs = objects {
                                                             for object in objs {
@@ -285,7 +285,7 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
                                         //then when querying for the chatObjId get the participants id's and displaynames and put into the 2 arrays.
                                         
                                         query.findObjectsInBackgroundWithBlock({
-                                            (objects, error) -> Void in
+                                            (objects:[AnyObject]?, error:NSError?) -> Void in
                                             if let objs = objects {
                                                 for object in objs {
                                                     self.chatObjId = object.objectId as String!
@@ -313,8 +313,11 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
     
     func replaceSeecretNames() {
     
+        
+        
+        
         if userParticipantType == "seecretViewer" {
-            for s in 0...self.chatParticipantIdsArray.count {
+            for (var s = 0; s < self.chatParticipantIdsArray.count; s++) {
                 //println("self.chatPart.count is \(self.chatParticipantIdsArray.count)")
                 let randomNameIndex = Int(arc4random_uniform(UInt32(self.seecretNameArray.count-1)))
                 //println("the random number is \(randomNameIndex) and the seecretName is \(self.seecretNameArray[randomNameIndex])")
@@ -327,7 +330,7 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
                 //println("uniqueReplaceName is now \(uniqueReplaceName)")
                 //println("the amount of messages is \(self.senderDisplaynameArray.count)")
                 //println("the sender array is \(self.senderDisplaynameArray)")
-                for y in 0...self.senderDisplaynameArray.count {
+                for (var y = 0; y < self.senderDisplaynameArray.count; y++) {
                     print("the senderDisplayNameArray is \(self.senderDisplaynameArray)")
                     print("uniqueReplaceName is now \(uniqueReplaceName)")
                     //uniqueReplaceName needs to be equal to Matt
@@ -399,10 +402,10 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
 /***********************************************************************************************
 //MARK: Make way for keyboard (1)
 ***********************************************************************************************/
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(conversationVC.keyboardWasShown(_:)), name: UIKeyboardDidShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(conversationVC.keyboardWillHide(_:)), name: UIKeyboardDidHideNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(conversationVC.getMessageFunc), name: "getMessage", object: nil)
-        let tapScrollViewGesture = UITapGestureRecognizer(target: self, action: #selector(conversationVC.didTapScrollView))
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWasShown:", name: UIKeyboardDidShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardDidHideNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "getMessageFunc", name: "getMessage", object: nil)
+        let tapScrollViewGesture = UITapGestureRecognizer(target: self, action: "didTapScrollView")
         tapScrollViewGesture.numberOfTapsRequired = 1
         resultsScrollView.addGestureRecognizer(tapScrollViewGesture)
         
@@ -451,9 +454,9 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
     
     func keyboardWillHide(notification:NSNotification) {
         
-        //let dict:NSDictionary = notification.userInfo!
-        //let s:NSValue = dict.valueForKey(UIKeyboardFrameEndUserInfoKey) as! NSValue
-        //let rect:CGRect = s.CGRectValue()
+        let dict:NSDictionary = notification.userInfo!
+        let s:NSValue = dict.valueForKey(UIKeyboardFrameEndUserInfoKey) as! NSValue
+        let rect:CGRect = s.CGRectValue()
         
         UIView.animateWithDuration(0.01, delay: 0, options: .CurveLinear, animations: {
             
@@ -520,7 +523,7 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
             let query = PFQuery(className: "_User")
             query.whereKey("username", equalTo: userName)
             query.findObjectsInBackgroundWithBlock {
-                (objects, error) -> Void in
+                (objects:[AnyObject]?, error:NSError?) -> Void in
                 self.resultsImageFiles.removeAll(keepCapacity: false)
                 
                 for object in objects! {
@@ -537,11 +540,10 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
                             
                             print("chatParticipantIdsArray is \(self.chatParticipantIdsArray)")
                             
-                            
-                            for u in 0...self.chatParticipantIdsArray.count {
+                            for (var u = 0; u < self.chatParticipantIdsArray.count; u++) {
                                 query2!.whereKey("objectId", equalTo: self.chatParticipantIdsArray[u])
                                 query2!.findObjectsInBackgroundWithBlock({
-                                    (objects2, error) -> Void in
+                                    (objects2:[AnyObject]?, error:NSError?) -> Void in
                                     self.resultsImageFiles2.removeAll(keepCapacity: false)
                                     for object in objects2! {
                                         self.resultsImageFiles2.append(object["photo"] as! PFFile)
@@ -580,7 +582,7 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
         
             
             let theWidth = self.view.frame.size.width
-            //let theHeight = self.view.frame.size.height
+            let theHeight = self.view.frame.size.height
             
             self.messageX = 37.0
             self.messageY = 26.0
@@ -608,7 +610,7 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
             let query = PFQuery.orQueryWithSubqueries([innerQ1])
             query.addAscendingOrder("createdAt")
             query.findObjectsInBackgroundWithBlock {
-                (objects, error) -> Void in
+                (objects:[AnyObject]?, error:NSError?) -> Void in
                 
                 if error == nil {
                     if let objs = objects {
@@ -627,7 +629,7 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
                     
                     self.replaceSeecretNames()
                     
-                    for i in 0...self.messageArray.count-1 {
+                    for var i = 0; i <= self.messageArray.count-1; i++ {
                         
                         if self.senderArray[i] == userName {
                             
@@ -880,7 +882,7 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
             query.whereKey("user", equalTo: userName)
             query.whereKey("blocked", equalTo: otherName)
             query.findObjectsInBackgroundWithBlock({
-                (objects, error) -> Void in
+                (objects:[AnyObject]?, error:NSError?) -> Void in
                 for object in objects! {
                     object.deleteInBackground()
                 }

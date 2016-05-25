@@ -12,7 +12,8 @@
 ***********************************************************************************************/
 
 import UIKit
-import Parse
+import CoreData
+
 class chatParticipantsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     var cellIndexPath:Int = -1
@@ -66,7 +67,7 @@ class chatParticipantsVC: UIViewController, UITableViewDelegate, UITableViewData
             let predicate = NSPredicate(format: "objectId = '"+thisChatId+"'")
             var query = PFQuery(className: "Chats", predicate: predicate)
             query.findObjectsInBackgroundWithBlock {
-                (objects, error) -> Void in
+                (objects: [AnyObject]?, error:NSError?) -> Void in
                 
                 if let objs = objects {
                     for object in objs {
@@ -81,11 +82,9 @@ class chatParticipantsVC: UIViewController, UITableViewDelegate, UITableViewData
                         }
                         
                         if self.userParticipantType == "seecretViewer" {
-
-                            for _ in 0...self.chatParticipantDisplayNameArray.count {
+                            for (var i = 0; i < self.chatParticipantDisplayNameArray.count; i++) {
                                 self.chatParticipantImageUIFiles.append(UIImage(named: "profileIcon")!)
                             }
-                            
                         } else {
                             
                         }
@@ -99,56 +98,59 @@ class chatParticipantsVC: UIViewController, UITableViewDelegate, UITableViewData
                         self.chatParticipantDisplayNameArray.removeAtIndex(index2!)
                         */
                         
+                        
+                        
+                        
+                        
+                        
+                        
+                        
                         repeat {
                             print("i is \(self.i)")
                             print("getting the image for userId \(self.chatParticipantIdsArray[self.i])")
                             query = PFUser.query()!
                             query.whereKey("objectId", equalTo: self.chatParticipantIdsArray[self.i])
-                            do {
-                                let objects = try query.findObjects()
-                                print(objects)
-                                if let objs = objects as [PFObject]? {
-                                    for object in objs {
-                                        if let userImgPFFile = object.valueForKey("photo") as? PFFile {
-                                            print("found photo")
-                                            do {
-                                                let userImgData = try userImgPFFile.getData()
-                                                print("got photo")
-                                                let userImgUI = UIImage(data: userImgData)
-                                                self.chatParticipantImageUIFiles.append(userImgUI!)
-                                                print("photo count is  \(self.chatParticipantImageUIFiles.count)")
-                                            } catch _ {
-                                                //handle error
-                                            }
-                                            
-                                            /*
-                                             userPicture.getDataInBackgroundWithBlock({
-                                             (imageData: NSData?, error: NSError?) -> Void in
-                                             
-                                             if (error == nil) {
-                                             
-                                             let image = UIImage(data:imageData!)
-                                             self.chatParticipantImageUIFiles.append(image!)
-                                             println("image count is \(self.chatParticipantImageUIFiles.count)")
-                                             self.i++
-                                             println("getting the image for userId \(self.chatParticipantIdsArray[self.i])")
-                                             query.whereKey("objectId", equalTo: self.chatParticipantIdsArray[self.i])
-                                             }
-                                             
-                                             })
-                                             */
+                            let objects = query.findObjects()
+                            print(objects)
+                            if let objs = objects {
+                                for object in objs {
+                                    if let userImgPFFile = object.valueForKey("photo") as? PFFile {
+                                        print("found photo")
+                                        if let userImgData = userImgPFFile.getData() {
+                                            print("got photo")
+                                            let userImgUI = UIImage(data: userImgData)
+                                            self.chatParticipantImageUIFiles.append(userImgUI!)
+                                            print("photo count is  \(self.chatParticipantImageUIFiles.count)")
                                         }
                                         
+                                        
+                                        
+                                        
+                                        
+                                        /*
+                                        userPicture.getDataInBackgroundWithBlock({
+                                        (imageData: NSData?, error: NSError?) -> Void in
+                                        
+                                        if (error == nil) {
+                                        
+                                        let image = UIImage(data:imageData!)
+                                        self.chatParticipantImageUIFiles.append(image!)
+                                        println("image count is \(self.chatParticipantImageUIFiles.count)")
+                                        self.i++
+                                        println("getting the image for userId \(self.chatParticipantIdsArray[self.i])")
+                                        query.whereKey("objectId", equalTo: self.chatParticipantIdsArray[self.i])
+                                        }
+                                        
+                                        })
+                                        */
                                     }
                                     
                                 }
                                 
-                                self.i += 1
-                                print("i is now \(self.i)")
-                            } catch {
-                                //handle error
                             }
                             
+                            self.i++
+                            print("i is now \(self.i)")
                         } while (self.i < self.chatParticipantIdsArray.count)
                         
                         
@@ -193,6 +195,10 @@ class chatParticipantsVC: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         cellIndexPath = indexPath.row
         self.performSegueWithIdentifier("goToProfileVC", sender: self)
+    }
+
+    func controllerDidChangeContent(controller: NSFetchedResultsController) {
+        resultsTable.reloadData()
     }
     
     override func didReceiveMemoryWarning() {

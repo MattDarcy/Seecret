@@ -13,8 +13,9 @@
 
 
 import UIKit
-import Parse
-class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
+import CoreData
+
+class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate {
 
     /***********************************************************************************************
      //MARK: UIActivity Spinner
@@ -114,13 +115,17 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     }
     
     func preTreatView() {
+//assign for CoreData
+        //frc = getFetchResultsController()
+        //frc.delegate = self
+        //frc.performFetch(nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(chatsVC.getMessageFunc), name: "getMessage", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "getMessageFunc", name: "getMessage", object: nil)
         
 //show the title programatically because the tab controller negates the navigation title
         self.tabBarController?.navigationItem.title = "Chats"
 //show the add button programatically
-        self.tabBarController?.navigationItem.setRightBarButtonItem(UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(chatsVC.addChatBtn_click)), animated: true)
+        self.tabBarController?.navigationItem.setRightBarButtonItem(UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addChatBtn_click"), animated: true)
         self.userObjectID = PFUser.currentUser()!.objectId!
         self.userDisplayName = PFUser.currentUser()?.objectForKey("displayName") as! String
     }
@@ -143,16 +148,12 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
             let predicate = NSPredicate(format: "objectId = '"+self.userObjectID+"'")
             let chatObj2 = PFQuery(className: "_User", predicate: predicate)
             chatObj2.findObjectsInBackgroundWithBlock({
-                (objects, error) -> Void in
+                (objects:[AnyObject]?, error:NSError?) -> Void in
                 if error == nil {
                     if let objs = objects {
                         for object in objs {
                             object.addUniqueObject(updateChatId, forKey: "chatObjectIds")
-                            do {
-                                try object.save()
-                            } catch {
-                                //handle error
-                            }
+                            object.save()
                             self.queryChats()
                         }
                     }
@@ -182,27 +183,16 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { 
             self.clearArrayContents()
-            var objects = [PFObject]()
+            // if coreDataContent == true {
+            //     //println("I will not get more data from Parse for chats.")
+            // } else {
             /***********************************************************************************************
             //MARK: Query Parse for user's chats and each chat's info/messages
             ***********************************************************************************************/
             var predicate = NSPredicate(format: "objectId = '"+self.userObjectID+"'")
             var query = PFQuery(className: "_User", predicate: predicate)
-            do {
-                objects = try query.findObjects()
-                //query.addAscendingOrder("group")
-
-            } catch {
-                //handle error
-            }
-            
-            let objs = objects
-            do {
-                
-            } catch {
-                //handle error
-            }
-            
+            var objects = query.findObjects()
+            //query.addAscendingOrder("group")
             if let objs = objects {
                 for object in objs {
                     
@@ -216,16 +206,11 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
             }
             
             //get the data for each chat from the Chats class
-            for i in 0...self.resultsObjectIds.count {
+            for (var i = 0; i < self.resultsObjectIds.count; i++) {
                 let thisChatId:String = self.resultsObjectIds[i]
                 predicate = NSPredicate(format: "objectId = '"+thisChatId+"'")
                 query = PFQuery(className: "Chats", predicate: predicate)
-                
-                do {
-                    var objects = try query.findObjects()
-                } catch {
-                    //error handling
-                }
+                objects = query.findObjects()
                 if let objs = objects {
                     print("objects found are: \(objs)")
                     for object in objs {
@@ -342,14 +327,8 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
             print(chatMessageSenders[currResult])
             print(chatMessageSenders[currResult][0])
             queryF!.whereKey("objectId", equalTo: self.chatMessageSenders[currResult][0])
-            
-            do {
-                let objects = try queryF!.findObjects()
-            } catch {
-                
-            }
-            
-            for object in objects {
+            let objects = queryF!.findObjects()
+            for object in objects! {
                 self.resultsNameArray.append(object.objectForKey("displayName") as! String)
                 self.resultsImageFiles.append(object.objectForKey("photo") as! PFFile)
             }
@@ -362,6 +341,11 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
             })
 
         }
+
+    
+
+     //   self.coreDataContent = true
+        
     }
     
     
@@ -426,7 +410,7 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        _ = tableView.cellForRowAtIndexPath(indexPath) as! chatsCell
+        var cell = tableView.cellForRowAtIndexPath(indexPath) as! chatsCell
         self.chatIdToFetch = self.resultsObjectIds[indexPath.row]
         self.performSegueWithIdentifier("goToConversationVC2", sender: self)
         
@@ -477,7 +461,7 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                             let predicate = NSPredicate(format: "objectId = '"+self.userObjectID+"'")
                             let chatObj2 = PFQuery(className: "_User", predicate: predicate)
                             chatObj2.findObjectsInBackgroundWithBlock({
-                                (objects, error) -> Void in
+                                (objects:[AnyObject]?, error:NSError?) -> Void in
                                 if error == nil {
                                     if let objs = objects {
                                         for object in objs {

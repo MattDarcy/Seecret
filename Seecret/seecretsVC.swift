@@ -13,7 +13,7 @@
 
 
 import UIKit
-import Parse
+
 class seecretsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     var cellIndexPath:Int = -1
@@ -55,7 +55,7 @@ class seecretsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         self.tabBarController?.navigationItem.title = "Seecrets"
         
         //show the add button programatically
-        self.tabBarController?.navigationItem.setRightBarButtonItem(UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(seecretsVC.addSeecretBtn_click)), animated: true)
+        self.tabBarController?.navigationItem.setRightBarButtonItem(UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addSeecretBtn_click"), animated: true)
         checkAccountStatus()
     }
     
@@ -81,7 +81,7 @@ class seecretsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         query.addAscendingOrder("createdAt")
         
         query.findObjectsInBackgroundWithBlock {
-            (objects, error) -> Void in
+            (objects:[AnyObject]?, error:NSError?) -> Void in
             
             if error == nil {
                 for object in objects! {
@@ -113,7 +113,7 @@ class seecretsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        _ = tableView.cellForRowAtIndexPath(indexPath) as! seecretCell
+        var cell = tableView.cellForRowAtIndexPath(indexPath) as! seecretCell
         cellIndexPath = indexPath.row
         self.performSegueWithIdentifier("goToConversationVC3", sender: self)
         
@@ -211,7 +211,7 @@ class seecretsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                     //Query all chats that exist
                     let query = PFQuery(className: "Chats")
                     query.findObjectsInBackgroundWithBlock {
-                        (objects, error) -> Void in
+                        (objects:[AnyObject]?, error:NSError?) -> Void in
                         print("objects is \(objects)")
                         if let objs = objects {
                             for object in objs {
@@ -243,7 +243,7 @@ class seecretsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                     }
                     
                     
-                    self.seecretCount += 1
+                    self.seecretCount++
                     print("seecret count is now \(self.seecretCount)")
                     
                     
@@ -270,7 +270,7 @@ class seecretsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                     
                     let query = PFQuery(className: "Chats")
                     query.findObjectsInBackgroundWithBlock {
-                        (objects, error) -> Void in
+                        (objects:[AnyObject]?, error:NSError?) -> Void in
                         if error == nil {
                             for object in objects! {
                                 let objectId = object.objectId as String!
@@ -302,15 +302,25 @@ class seecretsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                                     
                                     randomIndex = self.preventDuplicates(randomIndex, randomCount: self.mySeecretIdArray.count, seecretArray: self.mySeecretIdArray, downloadedChatArray: self.newSeecretIdArray)
                                     
-
+                                    
+                                    
+                                    
+                                    
+                                    
                                     
                                 } while self.randomNum2 == -1
                                 //new number, randomNum2 is tested
                                 print("check3")
-                                for i in 0...self.mySeecretIdArray.count {
+                                var i:Int = 0
+                                for i = 0; i < self.mySeecretIdArray.count; i++ {
+                                    
                                     print("mySeecretIdArray[\(i)] is \(self.mySeecretIdArray[i])")
                                     print("self.newSeecretIdArray[\(self.randomNum2)] is \(self.newSeecretIdArray[self.randomNum2])")
-
+                                    
+                                    
+                                    
+                                    
+                                    
                                     if self.mySeecretIdArray[i] as String != self.newSeecretIdArray[self.randomNum2] as String {
                                         print("mySeecretIdArray[\(i)] is \(self.mySeecretIdArray[i] as String) and newSeecretIdArray[\(self.randomNum2)] is \(self.newSeecretIdArray[self.randomNum2] as String)")
                                         print("duplicate flag is ZERO, exiting loop")
@@ -333,7 +343,7 @@ class seecretsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
                             seecretObj["viewerUsername"] = userName
                             seecretObj["chatTitle"] = self.newSeecretNameArray[randomIndex] as String
                             seecretObj["chatObjectId"] = self.newSeecretIdArray[randomIndex] as String
-                            self.seecretCount += 1
+                            self.seecretCount++
                             print("seecret count is now \(self.seecretCount)")
                             seecretObj.saveInBackground()
                             
@@ -367,7 +377,7 @@ class seecretsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         
         
 //for each seecret in this user's seecret list
-        for i in 0...randomCount {
+        for i = 0; i < randomCount; i++ {
 // see if the randomly selected chatroom has the same name as any of the seecrets on the list
             print("randomNum is \(randomNum) and i is \(i)")
             

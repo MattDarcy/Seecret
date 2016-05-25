@@ -13,10 +13,9 @@
 
 
 import UIKit
-import Parse
+
 class firstNavConVC: UINavigationController {
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         

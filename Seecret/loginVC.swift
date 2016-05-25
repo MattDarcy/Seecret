@@ -14,13 +14,16 @@
 // Consider using dictionaries. Dictionaries can hold arrays (messages, names/id's, images) and it is place-independent
 // fix up global vars
 
+var user : [Login] = []
+var savedUsername:String = ""
+var savedPassword:String = ""
+
 
 import UIKit
 import ReachabilitySwift
-import Parse
+import CoreData
 
-class loginVC: UIViewController, UITextFieldDelegate {
-    
+class loginVC: UIViewController, UITextFieldDelegate, NSFetchedResultsControllerDelegate {
 
     /***********************************************************************************************
     //MARK: UIActivity Spinner
@@ -43,6 +46,31 @@ class loginVC: UIViewController, UITextFieldDelegate {
         UIApplication.sharedApplication().endIgnoringInteractionEvents()
     }
     
+    /***********************************************************************************************
+    //MARK: Core Data Context, nItem, and newItem()
+    ***********************************************************************************************/
+    let context:NSManagedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext!
+    var nItem : Login? = nil
+    var frc:NSFetchedResultsController = NSFetchedResultsController()
+    func getFetchResultsController() -> NSFetchedResultsController {
+        frc = NSFetchedResultsController(fetchRequest: ListFetchRequest(), managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        return frc
+    }
+    func ListFetchRequest() -> NSFetchRequest {
+        let fetchRequest = NSFetchRequest(entityName: "Login")
+        //sorts list by alphabetical item
+        let sortDescriptor = NSSortDescriptor(key: "username", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        return fetchRequest
+    }
+    
+    var coreDataContent:Bool = false
+    
+    
+    
+    
+    
+    
     @IBOutlet weak var usernameTxt: UITextField!
     @IBOutlet weak var passwordTxt: UITextField!
     @IBOutlet weak var loginBtn: UIButton!
@@ -52,6 +80,42 @@ class loginVC: UIViewController, UITextFieldDelegate {
     let parseBadLogin:Int = 101
     
     func preTreatView() {
+        //assign for CoreData
+        
+        let delegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let context = delegate.managedObjectContext
+        let request = NSFetchRequest(entityName: "Login")
+        var err:NSError?
+        do {
+            user = try context?.executeFetchRequest(request) as! [Login]
+            //find out how to structure this in Swift 2
+            print("The user retained in core data is \(user)")
+            
+        } catch let err1 as NSError {
+            err = err1
+        }
+        if (err != nil) {
+            print("Problem with loading data")
+        }
+        
+        
+        frc = getFetchResultsController()
+        frc.delegate = self
+        try! frc.performFetch()
+        //if there is a saved username in core data, populate text box
+        let loginRequest = NSFetchRequest(entityName: "Login")
+        loginRequest.fetchLimit = 1
+        if let user = try! context!.executeFetchRequest(loginRequest).first as? [Login] {
+            print("there is data")
+            //print("username is \(user.username) and password is \(user.password)")
+            //usernameTxt.text = user.username
+            //passwordTxt.text = user.password
+        } else {
+            print("there is no data")
+        }
+
+        
+        
         
         let value = UIInterfaceOrientation.Portrait.rawValue
         UIDevice.currentDevice().setValue(value, forKey: "orientation")
@@ -66,6 +130,7 @@ class loginVC: UIViewController, UITextFieldDelegate {
 
     
     override func viewDidAppear(animated: Bool) {
+        preTreatView()
     }
     
     
@@ -136,6 +201,20 @@ class loginVC: UIViewController, UITextFieldDelegate {
                     })
                 } else if logInError == nil{
                     reachability.stopNotifier()
+                    let context = self.context
+                    //check if previous core data and delete
+                    //save the username and password in core data
+                    let ent = NSEntityDescription.entityForName("Login", inManagedObjectContext: context)
+                    let nItem2 = Login(entity: ent!, insertIntoManagedObjectContext: context)
+                    nItem2.username = self.usernameTxt.text!
+                    nItem2.password = self.passwordTxt.text!
+                    self.coreDataContent = true
+                    
+                    do {
+                        try context.save()
+                    } catch {
+                        print("problem");
+                    }
                     let installation: PFInstallation = PFInstallation.currentInstallation()
                     installation["user"] = PFUser.currentUser()
                     installation.saveInBackground()

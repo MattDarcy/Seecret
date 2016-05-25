@@ -16,7 +16,6 @@
 // upon login of new person, nix all core data for entire app
 
 import UIKit
-import Parse
 
 class signupVC: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UITextFieldDelegate{
 
@@ -176,7 +175,7 @@ class signupVC: UIViewController, UINavigationControllerDelegate, UIImagePickerC
             // Could be redundant, it seems Parse already does this when the image is there. Nonetheless, this is useful for
             // setting in-app resources to something and then uploading through Parse.
             
-            if imageFile!.isEqual(nil) {
+            if imageFile.isEqual(nil) {
                 let photoName = "profileIcon.png"
                 let photo = UIImage(named: photoName)
                 user["photo"] = UIImagePNGRepresentation(photo!)
