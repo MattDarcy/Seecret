@@ -16,6 +16,7 @@
 
 
 import UIKit
+import Parse
 import CoreData
 
 @UIApplicationMain
@@ -30,8 +31,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+        // Enable storing and querying data from Local Datastore.
+        // Remove this line if you don't want to use Local Datastore features or want to use cachePolicy.
+        Parse.enableLocalDatastore()
         
-        Parse.setApplicationId("8ynIb1OqlcecH68bEuM1kaYHOl5TUy2F1rYjsEig", clientKey: "MbwbFx8djLqzoFow4pgwMvuT1cY1VoxODGQJuqC5")       
+        let parseConfiguration = ParseClientConfiguration(block: { (ParseMutableClientConfiguration) -> Void in
+            ParseMutableClientConfiguration.applicationId = "kuAesCGyirSULqKqgqIw"
+            ParseMutableClientConfiguration.clientKey = "tXXWzwP5gAupgRtaRA2i"
+            ParseMutableClientConfiguration.server = "https://seecretserver.herokuapp.com/parse"
+        })
+        
+        Parse.initializeWithConfiguration(parseConfiguration)
+        
+        PFUser.enableAutomaticUser()
         
         /***********************************************************************************************
         //MARK: Required didFinishLaunchingWithOptions code for Push Notifications
@@ -89,8 +101,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
         let installation = PFInstallation.currentInstallation()
-        installation.setDeviceTokenFromData(deviceToken)
-        installation.saveInBackground()
+        installation!.setDeviceTokenFromData(deviceToken)
+        installation!.saveInBackground()
     }
     
     func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {

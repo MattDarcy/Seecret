@@ -12,6 +12,7 @@
 ***********************************************************************************************/
 
 import UIKit
+import Parse
 import CoreData
 
 class chatParticipantsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -66,99 +67,99 @@ class chatParticipantsVC: UIViewController, UITableViewDelegate, UITableViewData
             clearArrays()
             let predicate = NSPredicate(format: "objectId = '"+thisChatId+"'")
             var query = PFQuery(className: "Chats", predicate: predicate)
-            query.findObjectsInBackgroundWithBlock {
-                (objects: [AnyObject]?, error:NSError?) -> Void in
-                
-                if let objs = objects {
-                    for object in objs {
-                        self.chatParticipantIdsArray = (object["chatParticipantIds"] as! Array!)
-                        self.chatAdminIdsArray = (object["adminIds"] as! Array!)
-                        if self.chatParticipantDisplayNameArray == [] {
-                            print("displaynames array was empty, getting the real ones")
-                            self.chatParticipantDisplayNameArray = (object["chatParticipantDisplayNames"] as! Array!)
-                        } else {
-                            print("displaynames array was not empty, seecret makeover")
-                            print(self.chatParticipantDisplayNameArray)
-                        }
-                        
-                        if self.userParticipantType == "seecretViewer" {
-                            for (var i = 0; i < self.chatParticipantDisplayNameArray.count; i++) {
-                                self.chatParticipantImageUIFiles.append(UIImage(named: "profileIcon")!)
-                            }
-                        } else {
-                            
-                        }
-                        
-                        
-                        //to remove the current user from the display:
-                        /*
-                        var index1 = find(self.chatParticipantIdsArray, self.userId!)
-                        var index2 = find(self.chatParticipantDisplayNameArray, self.userDisplayName)
-                        self.chatParticipantIdsArray.removeAtIndex(index1!)
-                        self.chatParticipantDisplayNameArray.removeAtIndex(index2!)
-                        */
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        repeat {
-                            print("i is \(self.i)")
-                            print("getting the image for userId \(self.chatParticipantIdsArray[self.i])")
-                            query = PFUser.query()!
-                            query.whereKey("objectId", equalTo: self.chatParticipantIdsArray[self.i])
-                            let objects = query.findObjects()
-                            print(objects)
-                            if let objs = objects {
-                                for object in objs {
-                                    if let userImgPFFile = object.valueForKey("photo") as? PFFile {
-                                        print("found photo")
-                                        if let userImgData = userImgPFFile.getData() {
-                                            print("got photo")
-                                            let userImgUI = UIImage(data: userImgData)
-                                            self.chatParticipantImageUIFiles.append(userImgUI!)
-                                            print("photo count is  \(self.chatParticipantImageUIFiles.count)")
-                                        }
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        /*
-                                        userPicture.getDataInBackgroundWithBlock({
-                                        (imageData: NSData?, error: NSError?) -> Void in
-                                        
-                                        if (error == nil) {
-                                        
-                                        let image = UIImage(data:imageData!)
-                                        self.chatParticipantImageUIFiles.append(image!)
-                                        println("image count is \(self.chatParticipantImageUIFiles.count)")
-                                        self.i++
-                                        println("getting the image for userId \(self.chatParticipantIdsArray[self.i])")
-                                        query.whereKey("objectId", equalTo: self.chatParticipantIdsArray[self.i])
-                                        }
-                                        
-                                        })
-                                        */
-                                    }
-                                    
-                                }
-                                
-                            }
-                            
-                            self.i++
-                            print("i is now \(self.i)")
-                        } while (self.i < self.chatParticipantIdsArray.count)
-                        
-                        
-                        self.resultsTable.reloadData()
-                        
-                    }
-                }
-            }
+//            query.findObjectsInBackgroundWithBlock {
+//                (objects: [AnyObject]?, error:NSError?) -> Void in
+//                
+//                if let objs = objects {
+//                    for object in objs {
+//                        self.chatParticipantIdsArray = (object["chatParticipantIds"] as! Array!)
+//                        self.chatAdminIdsArray = (object["adminIds"] as! Array!)
+//                        if self.chatParticipantDisplayNameArray == [] {
+//                            print("displaynames array was empty, getting the real ones")
+//                            self.chatParticipantDisplayNameArray = (object["chatParticipantDisplayNames"] as! Array!)
+//                        } else {
+//                            print("displaynames array was not empty, seecret makeover")
+//                            print(self.chatParticipantDisplayNameArray)
+//                        }
+//                        
+//                        if self.userParticipantType == "seecretViewer" {
+//                            for (var i = 0; i < self.chatParticipantDisplayNameArray.count; i++) {
+//                                self.chatParticipantImageUIFiles.append(UIImage(named: "profileIcon")!)
+//                            }
+//                        } else {
+//                            
+//                        }
+//                        
+//                        
+//                        //to remove the current user from the display:
+//                        /*
+//                        var index1 = find(self.chatParticipantIdsArray, self.userId!)
+//                        var index2 = find(self.chatParticipantDisplayNameArray, self.userDisplayName)
+//                        self.chatParticipantIdsArray.removeAtIndex(index1!)
+//                        self.chatParticipantDisplayNameArray.removeAtIndex(index2!)
+//                        */
+//                        
+//                        
+//                        
+//                        
+//                        
+//                        
+//                        
+//                        
+//                        repeat {
+//                            print("i is \(self.i)")
+//                            print("getting the image for userId \(self.chatParticipantIdsArray[self.i])")
+//                            query = PFUser.query()!
+//                            query.whereKey("objectId", equalTo: self.chatParticipantIdsArray[self.i])
+//                            let objects = query.findObjects()
+//                            print(objects)
+//                            if let objs = objects {
+//                                for object in objs {
+//                                    if let userImgPFFile = object.valueForKey("photo") as? PFFile {
+//                                        print("found photo")
+//                                        if let userImgData = userImgPFFile.getData() {
+//                                            print("got photo")
+//                                            let userImgUI = UIImage(data: userImgData)
+//                                            self.chatParticipantImageUIFiles.append(userImgUI!)
+//                                            print("photo count is  \(self.chatParticipantImageUIFiles.count)")
+//                                        }
+//                                        
+//                                        
+//                                        
+//                                        
+//                                        
+//                                        /*
+//                                        userPicture.getDataInBackgroundWithBlock({
+//                                        (imageData: NSData?, error: NSError?) -> Void in
+//                                        
+//                                        if (error == nil) {
+//                                        
+//                                        let image = UIImage(data:imageData!)
+//                                        self.chatParticipantImageUIFiles.append(image!)
+//                                        println("image count is \(self.chatParticipantImageUIFiles.count)")
+//                                        self.i++
+//                                        println("getting the image for userId \(self.chatParticipantIdsArray[self.i])")
+//                                        query.whereKey("objectId", equalTo: self.chatParticipantIdsArray[self.i])
+//                                        }
+//                                        
+//                                        })
+//                                        */
+//                                    }
+//                                    
+//                                }
+//                                
+//                            }
+//                            
+//                            self.i++
+//                            print("i is now \(self.i)")
+//                        } while (self.i < self.chatParticipantIdsArray.count)
+//                        
+//                        
+//                        self.resultsTable.reloadData()
+//                        
+//                    }
+//                }
+//            }
 
         }
     }

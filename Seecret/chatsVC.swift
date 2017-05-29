@@ -13,6 +13,7 @@
 
 
 import UIKit
+import Parse
 import CoreData
 
 class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate {
@@ -147,18 +148,18 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate, NSF
             print("did not exist, registering chat participation for User class")
             let predicate = NSPredicate(format: "objectId = '"+self.userObjectID+"'")
             let chatObj2 = PFQuery(className: "_User", predicate: predicate)
-            chatObj2.findObjectsInBackgroundWithBlock({
-                (objects:[AnyObject]?, error:NSError?) -> Void in
-                if error == nil {
-                    if let objs = objects {
-                        for object in objs {
-                            object.addUniqueObject(updateChatId, forKey: "chatObjectIds")
-                            object.save()
-                            self.queryChats()
-                        }
-                    }
-                }
-            })
+//            chatObj2.findObjectsInBackgroundWithBlock({
+//                (objects:[AnyObject]?, error:NSError?) -> Void in
+//                if error == nil {
+//                    if let objs = objects {
+//                        for object in objs {
+//                            object.addUniqueObject(updateChatId, forKey: "chatObjectIds")
+//                            object.save()
+//                            self.queryChats()
+//                        }
+//                    }
+//                }
+//            })
         }
         
         
@@ -191,119 +192,119 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate, NSF
             ***********************************************************************************************/
             var predicate = NSPredicate(format: "objectId = '"+self.userObjectID+"'")
             var query = PFQuery(className: "_User", predicate: predicate)
-            var objects = query.findObjects()
-            //query.addAscendingOrder("group")
-            if let objs = objects {
-                for object in objs {
-                    
-                    //get the unique opbjectId's of each chat the user has participation in
-                    self.resultsObjectIds = (object["chatObjectIds"] as! Array)
-                    print(self.resultsObjectIds)
-                    print(self.resultsObjectIds.count)
-                    
-                    
-                }
-            }
+//            var objects = query.findObjects()
+//            //query.addAscendingOrder("group")
+//            if let objs = objects {
+//                for object in objs {
+//                    
+//                    //get the unique opbjectId's of each chat the user has participation in
+//                    self.resultsObjectIds = (object["chatObjectIds"] as! Array)
+//                    print(self.resultsObjectIds)
+//                    print(self.resultsObjectIds.count)
+//                    
+//                    
+//                }
+//            }
             
             //get the data for each chat from the Chats class
             for (var i = 0; i < self.resultsObjectIds.count; i++) {
                 let thisChatId:String = self.resultsObjectIds[i]
                 predicate = NSPredicate(format: "objectId = '"+thisChatId+"'")
                 query = PFQuery(className: "Chats", predicate: predicate)
-                objects = query.findObjects()
-                if let objs = objects {
-                    print("objects found are: \(objs)")
-                    for object in objs {
-                        //get this chat's data in 1d arrays
-                        self.thisChatsParticipantsIds = (object["chatParticipantIds"] as! Array!)
-                        self.thisChatsParticipantDisplayNames = (object["chatParticipantDisplayNames"] as! Array!)
-                        self.chatTitles.append(object["chatTitle"] as! String!)
-                        self.thisChatsAdminIds = (object["adminIds"] as! Array!)
-                        self.thisChatsAdminUsernames = (object["adminUsernames"] as! Array!)
-                        
-                        //put into the 2d arrays as a (row,col??)
-                        self.chatsParticipantsIds.append(self.thisChatsParticipantsIds)
-                        self.chatsParticipantDisplayNames.append(self.thisChatsParticipantDisplayNames)
-                        self.chatsAdminIds.append(self.thisChatsAdminIds)
-                        self.chatsAdminUsernames.append(self.thisChatsAdminUsernames)
-                        print("chatsParticipantIds array is \(self.chatsParticipantsIds)")
-                        print("chatsParticipantsDisplayNames array is \(self.chatsParticipantDisplayNames)")
-                        print("chatsAdminIds array is \(self.chatsAdminIds)")
-                        print("chatsAdminUsernames array is \(self.chatsAdminUsernames)")
-                        //clear the 1D arrays for next iteration and iterate k(row/col??) counter
-                        self.thisChatsParticipantsIds.removeAll(keepCapacity: false)
-                        self.thisChatsParticipantDisplayNames.removeAll(keepCapacity: false)
-                        self.thisChatsAdminIds.removeAll(keepCapacity: false)
-                        self.thisChatsAdminUsernames.removeAll(keepCapacity: false)
-                    }
-                    
-                    //for each chat the user has participation in, grab the messages for that chat (2D array) from Messages class
-                    predicate = NSPredicate(format: "chatObjectId = '"+self.resultsObjectIds[i]+"'")
-                    query = PFQuery(className: "Messages", predicate: predicate)
-                    //organize by timestamp with most recent first
-                    query.addDescendingOrder("createdAt")
-                    //This pulls all messages for a specific chat as objects
-                    objects = query.findObjects()
-                    if let objs = objects{
-                        for object in objs {
-                            //this gets createdAt time from Parse (UTC/GMT) and needs to be converted to user's timezone
-                            let date = object.createdAt as NSDate?
-                            let dateFormatter = NSDateFormatter()
-                            //get calendar
-                            let calendar = NSCalendar.currentCalendar()
-                            //Get just MM/dd/yyyy from current date
-                            let flags: NSCalendarUnit = [.Day, .Month, .Year]
-                            let components = calendar.components(flags, fromDate: NSDate())
-                            
-                            //Convert to NSDate
-                            let today = calendar.dateFromComponents(components)
-                            if  date!.timeIntervalSinceDate(today!).isSignMinus{
-                                //if the last message timestamp before today, show date
-                                //full data format is: "yyyy-MM-dd HH:mm:ss"
-                                dateFormatter.dateFormat = "MM-dd-yy"
-                            } else {
-                                //if the last message timestamp was today, show the time
-                                // need upper-case HH to go over 12 hour count.
-                                dateFormatter.dateFormat = "HH:mm"
-                            }
-                            //Call function to get local user's timezone abbreviation as a string ("GMT+9" returns for Seoul)
-                            let localZone = self.ltzAbbrev()
-                            dateFormatter.timeZone = NSTimeZone(name: "\(localZone)")
-                            var dateString = dateFormatter.stringFromDate(date!)
-                            ////println("the local time that this happened at was \(dateString)")
-                            dateString = dateFormatter.stringFromDate(date!)
-                            
-                            self.thisChatsTimestamps.append(dateString)
-                            self.thisChatsMessages.append(object["messageText"] as! String!)
-                            self.thisChatsMessageSenders.append(object["senderObjectId"] as! String!)
-                            
-                            //println("thisChatsTimestamps array is  \(self.thisChatsTimestamps)")
-                            //println("thisChatsMessages array is  \(self.thisChatsMessages)")
-                            //println("thisChatsMessageSenders array is \(self.thisChatsMessageSenders)")
-                            
-                            
-                            
-                        }
-                        //println("thisChatsTimestamps array is  \(self.thisChatsTimestamps)")
-                        //println("thisChatsMessages array is  \(self.thisChatsMessages)")
-                        //println("thisChatsMessageSenders array is \(self.thisChatsMessageSenders)")
-                        
-                        self.chatMessages.append(self.thisChatsMessages)
-                        self.chatMessageSenders.append(self.thisChatsMessageSenders)
-                        self.chatTimestamps.append(self.thisChatsTimestamps)
-                        
-                        //println("chatMessages array is \(self.chatMessages)")
-                        //println("chatMessageSenders array is \(self.chatMessageSenders)")
-                        //println("chatTimestamps array is \(self.chatTimestamps)")
-                        
-                        self.thisChatsMessages.removeAll(keepCapacity: false)
-                        self.thisChatsMessageSenders.removeAll(keepCapacity: false)
-                        self.thisChatsTimestamps.removeAll(keepCapacity: false)
-                        
-                        //for this chatId, set the subArray to the chat messages array acquired for this chatId
-                        //keep in mind the row for each is represented by the index, not the chatId itself, but both arrays' indexes are complimentary
-                    }
-                }
+//                objects = query.findObjects()
+//                if let objs = objects {
+//                    print("objects found are: \(objs)")
+//                    for object in objs {
+//                        //get this chat's data in 1d arrays
+//                        self.thisChatsParticipantsIds = (object["chatParticipantIds"] as! Array!)
+//                        self.thisChatsParticipantDisplayNames = (object["chatParticipantDisplayNames"] as! Array!)
+//                        self.chatTitles.append(object["chatTitle"] as! String!)
+//                        self.thisChatsAdminIds = (object["adminIds"] as! Array!)
+//                        self.thisChatsAdminUsernames = (object["adminUsernames"] as! Array!)
+//                        
+//                        //put into the 2d arrays as a (row,col??)
+//                        self.chatsParticipantsIds.append(self.thisChatsParticipantsIds)
+//                        self.chatsParticipantDisplayNames.append(self.thisChatsParticipantDisplayNames)
+//                        self.chatsAdminIds.append(self.thisChatsAdminIds)
+//                        self.chatsAdminUsernames.append(self.thisChatsAdminUsernames)
+//                        print("chatsParticipantIds array is \(self.chatsParticipantsIds)")
+//                        print("chatsParticipantsDisplayNames array is \(self.chatsParticipantDisplayNames)")
+//                        print("chatsAdminIds array is \(self.chatsAdminIds)")
+//                        print("chatsAdminUsernames array is \(self.chatsAdminUsernames)")
+//                        //clear the 1D arrays for next iteration and iterate k(row/col??) counter
+//                        self.thisChatsParticipantsIds.removeAll(keepCapacity: false)
+//                        self.thisChatsParticipantDisplayNames.removeAll(keepCapacity: false)
+//                        self.thisChatsAdminIds.removeAll(keepCapacity: false)
+//                        self.thisChatsAdminUsernames.removeAll(keepCapacity: false)
+//                    }
+//                    
+//                    //for each chat the user has participation in, grab the messages for that chat (2D array) from Messages class
+//                    predicate = NSPredicate(format: "chatObjectId = '"+self.resultsObjectIds[i]+"'")
+//                    query = PFQuery(className: "Messages", predicate: predicate)
+//                    //organize by timestamp with most recent first
+//                    query.addDescendingOrder("createdAt")
+//                    //This pulls all messages for a specific chat as objects
+//                    objects = query.findObjects()
+//                    if let objs = objects{
+//                        for object in objs {
+//                            //this gets createdAt time from Parse (UTC/GMT) and needs to be converted to user's timezone
+//                            let date = object.createdAt as NSDate?
+//                            let dateFormatter = NSDateFormatter()
+//                            //get calendar
+//                            let calendar = NSCalendar.currentCalendar()
+//                            //Get just MM/dd/yyyy from current date
+//                            let flags: NSCalendarUnit = [.Day, .Month, .Year]
+//                            let components = calendar.components(flags, fromDate: NSDate())
+//                            
+//                            //Convert to NSDate
+//                            let today = calendar.dateFromComponents(components)
+//                            if  date!.timeIntervalSinceDate(today!).isSignMinus{
+//                                //if the last message timestamp before today, show date
+//                                //full data format is: "yyyy-MM-dd HH:mm:ss"
+//                                dateFormatter.dateFormat = "MM-dd-yy"
+//                            } else {
+//                                //if the last message timestamp was today, show the time
+//                                // need upper-case HH to go over 12 hour count.
+//                                dateFormatter.dateFormat = "HH:mm"
+//                            }
+//                            //Call function to get local user's timezone abbreviation as a string ("GMT+9" returns for Seoul)
+//                            let localZone = self.ltzAbbrev()
+//                            dateFormatter.timeZone = NSTimeZone(name: "\(localZone)")
+//                            var dateString = dateFormatter.stringFromDate(date!)
+//                            ////println("the local time that this happened at was \(dateString)")
+//                            dateString = dateFormatter.stringFromDate(date!)
+//                            
+//                            self.thisChatsTimestamps.append(dateString)
+//                            self.thisChatsMessages.append(object["messageText"] as! String!)
+//                            self.thisChatsMessageSenders.append(object["senderObjectId"] as! String!)
+//                            
+//                            //println("thisChatsTimestamps array is  \(self.thisChatsTimestamps)")
+//                            //println("thisChatsMessages array is  \(self.thisChatsMessages)")
+//                            //println("thisChatsMessageSenders array is \(self.thisChatsMessageSenders)")
+//                            
+//                            
+//                            
+//                        }
+//                        //println("thisChatsTimestamps array is  \(self.thisChatsTimestamps)")
+//                        //println("thisChatsMessages array is  \(self.thisChatsMessages)")
+//                        //println("thisChatsMessageSenders array is \(self.thisChatsMessageSenders)")
+//                        
+//                        self.chatMessages.append(self.thisChatsMessages)
+//                        self.chatMessageSenders.append(self.thisChatsMessageSenders)
+//                        self.chatTimestamps.append(self.thisChatsTimestamps)
+//                        
+//                        //println("chatMessages array is \(self.chatMessages)")
+//                        //println("chatMessageSenders array is \(self.chatMessageSenders)")
+//                        //println("chatTimestamps array is \(self.chatTimestamps)")
+//                        
+//                        self.thisChatsMessages.removeAll(keepCapacity: false)
+//                        self.thisChatsMessageSenders.removeAll(keepCapacity: false)
+//                        self.thisChatsTimestamps.removeAll(keepCapacity: false)
+//                        
+//                        //for this chatId, set the subArray to the chat messages array acquired for this chatId
+//                        //keep in mind the row for each is represented by the index, not the chatId itself, but both arrays' indexes are complimentary
+//                    }
+//                }
             }
             //MUST BE AFTER THE FOR LOOP WITH I OR ELSE IT DOES NOT GET ALL THE CHATS!
             self.results = self.resultsObjectIds.count
@@ -327,11 +328,11 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate, NSF
             print(chatMessageSenders[currResult])
             print(chatMessageSenders[currResult][0])
             queryF!.whereKey("objectId", equalTo: self.chatMessageSenders[currResult][0])
-            let objects = queryF!.findObjects()
-            for object in objects! {
-                self.resultsNameArray.append(object.objectForKey("displayName") as! String)
-                self.resultsImageFiles.append(object.objectForKey("photo") as! PFFile)
-            }
+//            let objects = queryF!.findObjects()
+//            for object in objects! {
+//                self.resultsNameArray.append(object.objectForKey("displayName") as! String)
+//                self.resultsImageFiles.append(object.objectForKey("photo") as! PFFile)
+//            }
             
             self.currResult = self.currResult + 1
             self.fetchResults()
@@ -460,18 +461,18 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate, NSF
                             //and also save this chat id in the user class to say that this user has participation rights
                             let predicate = NSPredicate(format: "objectId = '"+self.userObjectID+"'")
                             let chatObj2 = PFQuery(className: "_User", predicate: predicate)
-                            chatObj2.findObjectsInBackgroundWithBlock({
-                                (objects:[AnyObject]?, error:NSError?) -> Void in
-                                if error == nil {
-                                    if let objs = objects {
-                                        for object in objs {
-                                            object.addUniqueObject(chatId, forKey: "chatObjectIds")
-                                            object.saveInBackground()
-                                        }
-                                    }
-                                    self.performSegueWithIdentifier("goToConversationVC2", sender: self)
-                                }
-                            })
+//                            chatObj2.findObjectsInBackgroundWithBlock({
+//                                (objects:[AnyObject]?, error:NSError?) -> Void in
+//                                if error == nil {
+//                                    if let objs = objects {
+//                                        for object in objs {
+//                                            object.addUniqueObject(chatId, forKey: "chatObjectIds")
+//                                            object.saveInBackground()
+//                                        }
+//                                    }
+//                                    self.performSegueWithIdentifier("goToConversationVC2", sender: self)
+//                                }
+//                            })
                         }
                     }
                 })

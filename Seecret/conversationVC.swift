@@ -12,6 +12,7 @@
 
 
 import UIKit
+import Parse
 import Bolts
 
 var userDisplayName = ""
@@ -172,139 +173,139 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
     func getUserData() {
         var predicate = NSPredicate(format: "objectId = '"+userObjectID+"'")
         var query = PFQuery(className: "_User", predicate: predicate)
-        query.findObjectsInBackgroundWithBlock({
-            (objects:[AnyObject]?, error:NSError?) -> Void in
-            if let objs = objects {
-                for object in objs {
-                    userDisplayName = (object["displayName"] as! String!)
-                }
-                
-                
-                //this needs to be done for an array and needs to be handleable for sizes of 0 to the max size of a chat minus the currentUser
-                //this is currently done for just the other person who was the friend in the friend list
-                predicate = NSPredicate(format: "objectId = '"+self.otherUserId+"'")
-                query = PFQuery(className: "_User", predicate: predicate)
-                query.findObjectsInBackgroundWithBlock({
-                    (objects:[AnyObject]?, error:NSError?) -> Void in
-                    if let objs = objects {
-                        for object in objs {
-                            self.otherDisplayName = (object.objectForKey("displayName") as! String)
-                            self.otherName = (object.objectForKey("username") as! String)
-                        }
-
-
-                        
-                
-/***********************************************************************************************
-//MARK: When entering 1:1 chat, see if exists already. If not, create.
-***********************************************************************************************/
-                        //we will come in from friends tab with 2 usernames. if otherName is not blank.
-                        //we will come in from chats tab with chatObjId ONLY IF EXISTS!
-                        //if came from friends tab, otherName not blank, search by the two names in the chat.
-                        //if came from chats tab, othername blank so search by the objectId
-                
-                        print("chatObjIdFromChatsTab is \(self.chatObjIdFromChatsTab)")
-                        print("chatObjIdFromSeecretsTab is \(self.chatObjIdFromSeecretsTab)")
-                        print("otherUserId is \(self.otherUserId)")
-                
-                        query = PFQuery(className: "Chats")
-                        if self.chatObjIdFromChatsTab == "" && self.chatObjIdFromSeecretsTab == "" && self.otherUserId != "" {
-                            print("querying for otherName")
-                            print("userId is \(userObjectID) and otherUserID is \(self.otherUserId)")
-                            query.whereKey("chatParticipantIds", containsAllObjectsInArray:[userObjectID,self.otherUserId])
-                        } else if self.chatObjIdFromChatsTab != "" && self.chatObjIdFromSeecretsTab == "" && self.otherUserId == "" {
-                            print("querying for objId from chats tab")
-                            self.chatObjId = self.chatObjIdFromChatsTab
-                            print("chatObjIdFromChatsTab is \(self.chatObjIdFromChatsTab)")
-                            query.whereKey("objectId", equalTo: self.chatObjIdFromChatsTab)
-                        } else if self.chatObjIdFromSeecretsTab != "" && self.chatObjIdFromChatsTab == "" && self.otherUserId == "" {
-                            print("querying for objId from seecrets tab")
-                            self.chatObjId = self.chatObjIdFromSeecretsTab
-                            query.whereKey("objectId", equalTo: self.chatObjIdFromSeecretsTab)
-                        }
-                        query.findObjectsInBackgroundWithBlock {
-                            (objects:[AnyObject]?, error:NSError?) -> Void in
-                            if let test = objects {
-                                //println("objects is \(test)")
-                                if test.count == 0 {
-                                    print("chat did not previously exist")
-                                    let chatObj = PFObject(className: "Chats")
-                                    chatObj["chatParticipantIds"] = [userObjectID, self.otherUserId]
-                                    self.chatParticipantIdsArray = [userObjectID, self.otherUserId]
-                                    chatObj["chatParticipantDisplayNames"] = [userDisplayName, self.otherDisplayName]
-                                    self.chatParticipantDisplayNames = [userDisplayName, self.otherDisplayName]
-                                    chatObj["chatTitle"] = "\(userDisplayName), \(self.otherDisplayName)"
-                                    chatObj["adminIds"] = [userObjectID, self.otherUserId]
-                                    chatObj["adminUsernames"] = [userName, self.otherName]
-                                    chatObj.saveInBackgroundWithBlock({
-                                        (succeeded, error:NSError?) -> Void in
-                                        if error == nil {
-                                            if let chatId = chatObj.objectId! as String! {
-                                                self.chatObjId = chatId
-                                                predicate = NSPredicate(format: "objectId = '"+userObjectID+"'")
-                                                let chatObj2 = PFQuery(className: "_User", predicate: predicate)
-                                                chatObj2.findObjectsInBackgroundWithBlock({
-                                                    (objects:[AnyObject]?, error:NSError?) -> Void in
-                                                    if error == nil {
-                                                        if let objs = objects {
-                                                            for object in objs {
-                                                                object.addUniqueObject(self.chatObjId, forKey: "chatObjectIds")
-                                                                object.saveInBackgroundWithBlock({
-                                                                    (succeeded, error:NSError?) -> Void in
-                                                                    let msgObj = PFObject(className: "Messages")
-                                                                    msgObj["chatObjectId"] = self.chatObjId
-                                                                    msgObj["chatTitle"] = "\(userDisplayName), \(self.otherDisplayName)"
-                                                                    msgObj["senderObjectId"] = userObjectID
-                                                                    msgObj["senderUsername"] = userName
-                                                                    msgObj["senderDisplayName"] = userDisplayName
-                                                                    msgObj["messageText"] = "Chat has been created..."
-                                                                    msgObj.saveInBackgroundWithBlock({
-                                                                        (succeeded, error:NSError?) -> Void in
-                                                                        self.getProfileImages()
-                                                                        //self.refreshResults()
-                                                                    })
-                                                                })
-                                                            }
-                                                        }
-                                                    }
-                                                })
-                                            }
-                                        }
-                                    })
-                                } else if test.count > 0 {
-                                    print("chat exists already")
-                                    for object in test {
-                                        self.chatParticipantDisplayNames = (object.objectForKey("chatParticipantDisplayNames") as! [String])
-                                        self.chatParticipantIdsArray = (object.objectForKey("chatParticipantIds") as! [String])
-                                        print("the displaynamesArray is \(self.chatParticipantDisplayNames)")
-                                    }
-                                    if (self.otherUserId != "") {
-                                        query = PFQuery(className: "Chats")
-                                        query.whereKey("chatParticipantIds", containsAllObjectsInArray:[userObjectID,self.otherUserId])
-                                        //make sure this is ok to be getting based on the 2 people all the time chat exists. I think it's not.
-                                        //then when querying for the chatObjId get the participants id's and displaynames and put into the 2 arrays.
-                                        
-                                        query.findObjectsInBackgroundWithBlock({
-                                            (objects:[AnyObject]?, error:NSError?) -> Void in
-                                            if let objs = objects {
-                                                for object in objs {
-                                                    self.chatObjId = object.objectId as String!
-                                                    print("I got the objectId \(self.chatObjId)")
-                                                }
-                                            }
-                                        })
-                                    }
-                                    print("check1")
-                                    
-                                    self.getProfileImages()
-                                    //self.refreshResults()
-                                }
-                            }
-                        }
-                    }
-                })
-            }
-        })
+//        query.findObjectsInBackgroundWithBlock({
+//            (objects:[AnyObject]?, error:NSError?) -> Void in
+//            if let objs = objects {
+//                for object in objs {
+//                    userDisplayName = (object["displayName"] as! String!)
+//                }
+//                
+//                
+//                //this needs to be done for an array and needs to be handleable for sizes of 0 to the max size of a chat minus the currentUser
+//                //this is currently done for just the other person who was the friend in the friend list
+//                predicate = NSPredicate(format: "objectId = '"+self.otherUserId+"'")
+//                query = PFQuery(className: "_User", predicate: predicate)
+//                query.findObjectsInBackgroundWithBlock({
+//                    (objects:[AnyObject]?, error:NSError?) -> Void in
+//                    if let objs = objects {
+//                        for object in objs {
+//                            self.otherDisplayName = (object.objectForKey("displayName") as! String)
+//                            self.otherName = (object.objectForKey("username") as! String)
+//                        }
+//
+//
+//                        
+//                
+///***********************************************************************************************
+////MARK: When entering 1:1 chat, see if exists already. If not, create.
+//***********************************************************************************************/
+//                        //we will come in from friends tab with 2 usernames. if otherName is not blank.
+//                        //we will come in from chats tab with chatObjId ONLY IF EXISTS!
+//                        //if came from friends tab, otherName not blank, search by the two names in the chat.
+//                        //if came from chats tab, othername blank so search by the objectId
+//                
+//                        print("chatObjIdFromChatsTab is \(self.chatObjIdFromChatsTab)")
+//                        print("chatObjIdFromSeecretsTab is \(self.chatObjIdFromSeecretsTab)")
+//                        print("otherUserId is \(self.otherUserId)")
+//                
+//                        query = PFQuery(className: "Chats")
+//                        if self.chatObjIdFromChatsTab == "" && self.chatObjIdFromSeecretsTab == "" && self.otherUserId != "" {
+//                            print("querying for otherName")
+//                            print("userId is \(userObjectID) and otherUserID is \(self.otherUserId)")
+//                            query.whereKey("chatParticipantIds", containsAllObjectsInArray:[userObjectID,self.otherUserId])
+//                        } else if self.chatObjIdFromChatsTab != "" && self.chatObjIdFromSeecretsTab == "" && self.otherUserId == "" {
+//                            print("querying for objId from chats tab")
+//                            self.chatObjId = self.chatObjIdFromChatsTab
+//                            print("chatObjIdFromChatsTab is \(self.chatObjIdFromChatsTab)")
+//                            query.whereKey("objectId", equalTo: self.chatObjIdFromChatsTab)
+//                        } else if self.chatObjIdFromSeecretsTab != "" && self.chatObjIdFromChatsTab == "" && self.otherUserId == "" {
+//                            print("querying for objId from seecrets tab")
+//                            self.chatObjId = self.chatObjIdFromSeecretsTab
+//                            query.whereKey("objectId", equalTo: self.chatObjIdFromSeecretsTab)
+//                        }
+////                        query.findObjectsInBackgroundWithBlock {
+////                            (objects:[AnyObject]?, error:NSError?) -> Void in
+////                            if let test = objects {
+////                                //println("objects is \(test)")
+////                                if test.count == 0 {
+////                                    print("chat did not previously exist")
+////                                    let chatObj = PFObject(className: "Chats")
+////                                    chatObj["chatParticipantIds"] = [userObjectID, self.otherUserId]
+////                                    self.chatParticipantIdsArray = [userObjectID, self.otherUserId]
+////                                    chatObj["chatParticipantDisplayNames"] = [userDisplayName, self.otherDisplayName]
+////                                    self.chatParticipantDisplayNames = [userDisplayName, self.otherDisplayName]
+////                                    chatObj["chatTitle"] = "\(userDisplayName), \(self.otherDisplayName)"
+////                                    chatObj["adminIds"] = [userObjectID, self.otherUserId]
+////                                    chatObj["adminUsernames"] = [userName, self.otherName]
+////                                    chatObj.saveInBackgroundWithBlock({
+////                                        (succeeded, error:NSError?) -> Void in
+////                                        if error == nil {
+////                                            if let chatId = chatObj.objectId! as String! {
+////                                                self.chatObjId = chatId
+////                                                predicate = NSPredicate(format: "objectId = '"+userObjectID+"'")
+////                                                let chatObj2 = PFQuery(className: "_User", predicate: predicate)
+//////                                                chatObj2.findObjectsInBackgroundWithBlock({
+//////                                                    (objects:[AnyObject]?, error:NSError?) -> Void in
+//////                                                    if error == nil {
+//////                                                        if let objs = objects {
+//////                                                            for object in objs {
+//////                                                                object.addUniqueObject(self.chatObjId, forKey: "chatObjectIds")
+//////                                                                object.saveInBackgroundWithBlock({
+//////                                                                    (succeeded, error:NSError?) -> Void in
+//////                                                                    let msgObj = PFObject(className: "Messages")
+//////                                                                    msgObj["chatObjectId"] = self.chatObjId
+//////                                                                    msgObj["chatTitle"] = "\(userDisplayName), \(self.otherDisplayName)"
+//////                                                                    msgObj["senderObjectId"] = userObjectID
+//////                                                                    msgObj["senderUsername"] = userName
+//////                                                                    msgObj["senderDisplayName"] = userDisplayName
+//////                                                                    msgObj["messageText"] = "Chat has been created..."
+//////                                                                    msgObj.saveInBackgroundWithBlock({
+//////                                                                        (succeeded, error:NSError?) -> Void in
+//////                                                                        self.getProfileImages()
+//////                                                                        //self.refreshResults()
+//////                                                                    })
+//////                                                                })
+//////                                                            }
+//////                                                        }
+//////                                                    }
+//////                                                })
+////                                            }
+////                                        }
+////                                    })
+////                                } else if test.count > 0 {
+////                                    print("chat exists already")
+////                                    for object in test {
+////                                        self.chatParticipantDisplayNames = (object.objectForKey("chatParticipantDisplayNames") as! [String])
+////                                        self.chatParticipantIdsArray = (object.objectForKey("chatParticipantIds") as! [String])
+////                                        print("the displaynamesArray is \(self.chatParticipantDisplayNames)")
+////                                    }
+////                                    if (self.otherUserId != "") {
+////                                        query = PFQuery(className: "Chats")
+////                                        query.whereKey("chatParticipantIds", containsAllObjectsInArray:[userObjectID,self.otherUserId])
+////                                        //make sure this is ok to be getting based on the 2 people all the time chat exists. I think it's not.
+////                                        //then when querying for the chatObjId get the participants id's and displaynames and put into the 2 arrays.
+////                                        
+//////                                        query.findObjectsInBackgroundWithBlock({
+//////                                            (objects:[AnyObject]?, error:NSError?) -> Void in
+//////                                            if let objs = objects {
+//////                                                for object in objs {
+//////                                                    self.chatObjId = object.objectId as String!
+//////                                                    print("I got the objectId \(self.chatObjId)")
+//////                                                }
+//////                                            }
+//////                                        })
+////                                    }
+////                                    print("check1")
+////                                    
+////                                    self.getProfileImages()
+////                                    //self.refreshResults()
+////                                }
+////                            }
+////                        }
+//                    }
+//                })
+//            }
+//        })
     }
 
 /***********************************************************************************************
@@ -522,49 +523,49 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
             
             let query = PFQuery(className: "_User")
             query.whereKey("username", equalTo: userName)
-            query.findObjectsInBackgroundWithBlock {
-                (objects:[AnyObject]?, error:NSError?) -> Void in
-                self.resultsImageFiles.removeAll(keepCapacity: false)
-                
-                for object in objects! {
-                    self.resultsImageFiles.append(object["photo"] as! PFFile)
-                    self.resultsImageFiles[0].getDataInBackgroundWithBlock {
-                        (imageData:NSData?, error:NSError?) -> Void in
-                        
-                        if error == nil {
-                            self.myImg = UIImage(data: imageData!)
-                            //var query2 = PFQuery(className: "_User")
-                            let query2 = PFUser.query()
-                            
-                            //set up if statements to query related to othername if coming from friends tab, otherwise getting the images of each participant if coming from chats/seecrets tab
-                            
-                            print("chatParticipantIdsArray is \(self.chatParticipantIdsArray)")
-                            
-                            for (var u = 0; u < self.chatParticipantIdsArray.count; u++) {
-                                query2!.whereKey("objectId", equalTo: self.chatParticipantIdsArray[u])
-                                query2!.findObjectsInBackgroundWithBlock({
-                                    (objects2:[AnyObject]?, error:NSError?) -> Void in
-                                    self.resultsImageFiles2.removeAll(keepCapacity: false)
-                                    for object in objects2! {
-                                        self.resultsImageFiles2.append(object["photo"] as! PFFile)
-                                        self.resultsImageFiles2[0].getDataInBackgroundWithBlock {
-                                            (imageData:NSData?, error:NSError?) -> Void in
-                                            
-                                            if error == nil {
-                                                self.otherImg = UIImage(data: imageData!)
-                                                self.imgArray?.append(UIImage(data: imageData!)!)
-                                                
-                                            }
-                                        }
-                                    }
-                                    self.refreshResults()
-                                })
-                            }
-                            print("imgArray count is \(self.imgArray?.count)")
-                        }
-                    }
-                }
-            }
+//            query.findObjectsInBackgroundWithBlock {
+//                (objects:[AnyObject]?, error:NSError?) -> Void in
+//                self.resultsImageFiles.removeAll(keepCapacity: false)
+//                
+//                for object in objects! {
+//                    self.resultsImageFiles.append(object["photo"] as! PFFile)
+//                    self.resultsImageFiles[0].getDataInBackgroundWithBlock {
+//                        (imageData:NSData?, error:NSError?) -> Void in
+//                        
+//                        if error == nil {
+//                            self.myImg = UIImage(data: imageData!)
+//                            //var query2 = PFQuery(className: "_User")
+//                            let query2 = PFUser.query()
+//                            
+//                            //set up if statements to query related to othername if coming from friends tab, otherwise getting the images of each participant if coming from chats/seecrets tab
+//                            
+//                            print("chatParticipantIdsArray is \(self.chatParticipantIdsArray)")
+//                            
+//                            for (var u = 0; u < self.chatParticipantIdsArray.count; u++) {
+//                                query2!.whereKey("objectId", equalTo: self.chatParticipantIdsArray[u])
+////                                query2!.findObjectsInBackgroundWithBlock({
+////                                    (objects2:[AnyObject]?, error:NSError?) -> Void in
+////                                    self.resultsImageFiles2.removeAll(keepCapacity: false)
+////                                    for object in objects2! {
+////                                        self.resultsImageFiles2.append(object["photo"] as! PFFile)
+////                                        self.resultsImageFiles2[0].getDataInBackgroundWithBlock {
+////                                            (imageData:NSData?, error:NSError?) -> Void in
+////                                            
+////                                            if error == nil {
+////                                                self.otherImg = UIImage(data: imageData!)
+////                                                self.imgArray?.append(UIImage(data: imageData!)!)
+////                                                
+////                                            }
+////                                        }
+////                                    }
+////                                    self.refreshResults()
+////                                })
+//                            }
+//                            print("imgArray count is \(self.imgArray?.count)")
+//                        }
+//                    }
+//                }
+//            }
         }
     }
     
@@ -609,189 +610,189 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
             
             let query = PFQuery.orQueryWithSubqueries([innerQ1])
             query.addAscendingOrder("createdAt")
-            query.findObjectsInBackgroundWithBlock {
-                (objects:[AnyObject]?, error:NSError?) -> Void in
-                
-                if error == nil {
-                    if let objs = objects {
-                        for object in objs {
-                            self.senderArray.append(object.objectForKey("senderUsername") as! String)
-                            self.senderDisplaynameArray.append(object.objectForKey("senderDisplayName") as! String)
-                            self.messageArray.append(object.objectForKey("messageText") as! String)
-                        }
-                    }
-                    
-                    //empty what we have added to the scrollview
-                    for subView in self.resultsScrollView.subviews {
-                        subView.removeFromSuperview()
-                        
-                    }
-                    
-                    self.replaceSeecretNames()
-                    
-                    for var i = 0; i <= self.messageArray.count-1; i++ {
-                        
-                        if self.senderArray[i] == userName {
-                            
-                            //the blue color is #3BB3E6
-                            //the orange color is #FBCB55
-                            
-                            
-                            //display the user's displayname
-                            let userDisplaynameLbl:UILabel = UILabel()
-                            userDisplaynameLbl.frame = CGRectMake(0, 0, self.resultsScrollView.frame.size.width-94, CGFloat.max)
-                            //userDisplaynameLbl.backgroundColor = UIColor.blueColor()
-                            userDisplaynameLbl.textAlignment = NSTextAlignment.Right
-                            userDisplaynameLbl.numberOfLines = 1
-                            userDisplaynameLbl.font = UIFont(name: "Helvetica Neuse" , size: 14)
-                            userDisplaynameLbl.text = self.senderDisplaynameArray[i]
-                            userDisplaynameLbl.sizeToFit()
-                            userDisplaynameLbl.layer.zPosition = 20
-                            userDisplaynameLbl.frame.origin.x = (self.resultsScrollView.frame.size.width - self.messageX) - userDisplaynameLbl.frame.size.width
-                            userDisplaynameLbl.frame.origin.y = self.messageY - 25
-                            self.resultsScrollView.addSubview(userDisplaynameLbl)
-                            
-                            
-                            //display the message from this user
-                            let messageLbl:UILabel = UILabel()
-                            messageLbl.frame = CGRectMake(0, 0, self.resultsScrollView.frame.size.width-94, CGFloat.max)
-                            //messageLbl.backgroundColor = UIColor.blueColor()
-                            //messageLbl.backgroundColor = UIColor(netHex: 0x3BB3E6)
-                            print("i is \(i)")
-                            if (i % 2 > 0) {
-                                messageLbl.backgroundColor = UIColor(netHex: 0xFBCB55)
-                            } else {
-                                messageLbl.backgroundColor = UIColor(netHex: 0x3BB3E6)
-                            }
-                            messageLbl.lineBreakMode = NSLineBreakMode.ByWordWrapping
-                            messageLbl.textAlignment = NSTextAlignment.Left
-                            messageLbl.numberOfLines = 0
-                            messageLbl.font = UIFont(name: "Helvetica Neuse" , size: 17)
-                            //messageLbl.textColor = UIColor.whiteColor()
-                            messageLbl.textColor = UIColor.blackColor()
-                            messageLbl.text = self.messageArray[i]
-                            messageLbl.sizeToFit()
-                            messageLbl.layer.zPosition = 20
-                            messageLbl.frame.origin.x = (self.resultsScrollView.frame.size.width - self.messageX) - messageLbl.frame.size.width - 5
-                            messageLbl.frame.origin.y = self.messageY
-                            self.resultsScrollView.addSubview(messageLbl)
-                            self.messageY += messageLbl.frame.size.height + 30
-                            
-                            //format a nice chat bubble for the text label
-                            let frameLbl:UILabel = UILabel()
-                            frameLbl.frame.size = CGSizeMake(messageLbl.frame.size.width + 10, messageLbl.frame.size.height + 10)
-                            frameLbl.frame.origin.x = (self.resultsScrollView.frame.size.width - self.frameX) - frameLbl.frame.size.width - 5
-                            frameLbl.frame.origin.y = self.frameY
-                            //frameLbl.backgroundColor = UIColor.blueColor()
-                            //frameLbl.backgroundColor = UIColor(netHex: 0x3BB3E6)
-                            print("i is \(i)")
-                            if (i % 2 > 0) {
-                                frameLbl.backgroundColor = UIColor(netHex: 0xFBCB55)
-                            } else {
-                                frameLbl.backgroundColor = UIColor(netHex: 0x3BB3E6)
-                            }
-                            frameLbl.layer.masksToBounds = true
-                            frameLbl.layer.cornerRadius = 10
-                            self.resultsScrollView.addSubview(frameLbl)
-                            self.frameY += frameLbl.frame.size.height + 20
-                            
-                            //display user's image with their message
-                            let img:UIImageView = UIImageView()
-                            if self.userParticipantType == "seecretViewer" {
-                                img.image = UIImage(named: "profileIcon")
-                            } else {
-                                img.image = self.myImg
-                            }
-                            img.frame.size = CGSizeMake(34, 34)
-                            img.frame.origin.x = (self.resultsScrollView.frame.size.width - self.imgX) - img.frame.size.width
-                            img.frame.origin.y = self.imgY
-                            img.layer.zPosition = 30
-                            img.layer.cornerRadius = img.frame.size.width/2
-                            img.clipsToBounds = true
-                            self.resultsScrollView.addSubview(img)
-                            self.imgY += frameLbl.frame.size.height + 20
-                            
-                            
-                            self.resultsScrollView.contentSize = CGSizeMake(theWidth, self.messageY)
-                            
-                        } else {
-                            //do the same for the other person
-                            
-                            let otherUserDisplaynameLbl:UILabel = UILabel()
-                            otherUserDisplaynameLbl.frame = CGRectMake(0, 0, self.resultsScrollView.frame.size.width-94, CGFloat.max)
-                            otherUserDisplaynameLbl.textAlignment = NSTextAlignment.Left
-                            otherUserDisplaynameLbl.numberOfLines = 1
-                            otherUserDisplaynameLbl.font = UIFont(name: "Helvetica Neuse" , size: 14)
-                            otherUserDisplaynameLbl.text = self.senderDisplaynameArray[i]
-                            //otherUserDisplaynameLbl.backgroundColor = UIColor.blueColor()
-                            otherUserDisplaynameLbl.sizeToFit()
-                            otherUserDisplaynameLbl.layer.zPosition = 20
-                            otherUserDisplaynameLbl.frame.origin.x = self.messageX + 6.5
-                            otherUserDisplaynameLbl.frame.origin.y = self.messageY - 25
-                            self.resultsScrollView.addSubview(otherUserDisplaynameLbl)
-                            
-                            
-                            
-                            let messageLbl:UILabel = UILabel()
-                            messageLbl.frame = CGRectMake(0, 0, self.resultsScrollView.frame.size.width-94, CGFloat.max)
-                            //messageLbl.backgroundColor = UIColor.groupTableViewBackgroundColor()
-                            print("i is \(i)")
-                            if (i % 2 > 0) {
-                                messageLbl.backgroundColor = UIColor(netHex: 0xFBCB55)
-                            } else {
-                                messageLbl.backgroundColor = UIColor(netHex: 0x3BB3E6)
-                            }
-                            
-                            messageLbl.lineBreakMode = NSLineBreakMode.ByWordWrapping
-                            messageLbl.textAlignment = NSTextAlignment.Left
-                            messageLbl.numberOfLines = 0
-                            messageLbl.font = UIFont(name: "Helvetica Neuse" , size: 17)
-                            //messageLbl.textColor = UIColor.blackColor()
-                            messageLbl.textColor = UIColor.blackColor()
-                            messageLbl.text = self.messageArray[i]
-                            messageLbl.sizeToFit()
-                            messageLbl.layer.zPosition = 20
-                            messageLbl.frame.origin.x = self.messageX + 6.5
-                            messageLbl.frame.origin.y = self.messageY
-                            self.resultsScrollView.addSubview(messageLbl)
-                            self.messageY += messageLbl.frame.size.height + 30
-                            let frameLbl:UILabel = UILabel()
-                            frameLbl.frame = CGRectMake(self.frameX,self.frameY,messageLbl.frame.size.width + 10, messageLbl.frame.size.height + 10)
-                            //frameLbl.backgroundColor = UIColor.groupTableViewBackgroundColor()
-                            if (i % 2 > 0) {
-                                frameLbl.backgroundColor = UIColor(netHex: 0xFBCB55)
-                            } else {
-                                frameLbl.backgroundColor = UIColor(netHex: 0x3BB3E6)
-                            }
-                            //frameLbl.backgroundColor = UIColor(netHex: 0xFBCB55)
-                            frameLbl.frame.origin.x = self.messageX + 2
-                            frameLbl.layer.masksToBounds = true
-                            frameLbl.layer.cornerRadius = 10
-                            self.resultsScrollView.addSubview(frameLbl)
-                            self.frameY += frameLbl.frame.size.height + 20
-                            let img:UIImageView = UIImageView()
-                            img.image = self.otherImg
-                            img.frame = CGRectMake(self.imgX, self.imgY, 34, 34)
-                            img.layer.zPosition = 30
-                            img.layer.cornerRadius = img.frame.size.width/2
-                            img.clipsToBounds = true
-                            self.resultsScrollView.addSubview(img)
-                            self.imgY += frameLbl.frame.size.height + 20
-                            self.resultsScrollView.contentSize = CGSizeMake(theWidth, self.messageY)
-                        }
-                        //all messages start poisitioning at the end of the scrollview (Kakao does not do this)
-                        let bottomOffset:CGPoint = CGPointMake(0,self.resultsScrollView.contentSize.height - self.resultsScrollView.bounds.size.height)
-                        self.resultsScrollView.setContentOffset(bottomOffset, animated: false)
-   
-                    }
-                    
-                }
-              
-                dispatch_async(dispatch_get_main_queue(), {
-                    self.resumeApp()
-                })
-                
-            } 
+//            query.findObjectsInBackgroundWithBlock {
+//                (objects:[AnyObject]?, error:NSError?) -> Void in
+//                
+//                if error == nil {
+//                    if let objs = objects {
+//                        for object in objs {
+//                            self.senderArray.append(object.objectForKey("senderUsername") as! String)
+//                            self.senderDisplaynameArray.append(object.objectForKey("senderDisplayName") as! String)
+//                            self.messageArray.append(object.objectForKey("messageText") as! String)
+//                        }
+//                    }
+//                    
+//                    //empty what we have added to the scrollview
+//                    for subView in self.resultsScrollView.subviews {
+//                        subView.removeFromSuperview()
+//                        
+//                    }
+//                    
+//                    self.replaceSeecretNames()
+//                    
+//                    for var i = 0; i <= self.messageArray.count-1; i++ {
+//                        
+//                        if self.senderArray[i] == userName {
+//                            
+//                            //the blue color is #3BB3E6
+//                            //the orange color is #FBCB55
+//                            
+//                            
+//                            //display the user's displayname
+//                            let userDisplaynameLbl:UILabel = UILabel()
+//                            userDisplaynameLbl.frame = CGRectMake(0, 0, self.resultsScrollView.frame.size.width-94, CGFloat.max)
+//                            //userDisplaynameLbl.backgroundColor = UIColor.blueColor()
+//                            userDisplaynameLbl.textAlignment = NSTextAlignment.Right
+//                            userDisplaynameLbl.numberOfLines = 1
+//                            userDisplaynameLbl.font = UIFont(name: "Helvetica Neuse" , size: 14)
+//                            userDisplaynameLbl.text = self.senderDisplaynameArray[i]
+//                            userDisplaynameLbl.sizeToFit()
+//                            userDisplaynameLbl.layer.zPosition = 20
+//                            userDisplaynameLbl.frame.origin.x = (self.resultsScrollView.frame.size.width - self.messageX) - userDisplaynameLbl.frame.size.width
+//                            userDisplaynameLbl.frame.origin.y = self.messageY - 25
+//                            self.resultsScrollView.addSubview(userDisplaynameLbl)
+//                            
+//                            
+//                            //display the message from this user
+//                            let messageLbl:UILabel = UILabel()
+//                            messageLbl.frame = CGRectMake(0, 0, self.resultsScrollView.frame.size.width-94, CGFloat.max)
+//                            //messageLbl.backgroundColor = UIColor.blueColor()
+//                            //messageLbl.backgroundColor = UIColor(netHex: 0x3BB3E6)
+//                            print("i is \(i)")
+//                            if (i % 2 > 0) {
+//                                messageLbl.backgroundColor = UIColor(netHex: 0xFBCB55)
+//                            } else {
+//                                messageLbl.backgroundColor = UIColor(netHex: 0x3BB3E6)
+//                            }
+//                            messageLbl.lineBreakMode = NSLineBreakMode.ByWordWrapping
+//                            messageLbl.textAlignment = NSTextAlignment.Left
+//                            messageLbl.numberOfLines = 0
+//                            messageLbl.font = UIFont(name: "Helvetica Neuse" , size: 17)
+//                            //messageLbl.textColor = UIColor.whiteColor()
+//                            messageLbl.textColor = UIColor.blackColor()
+//                            messageLbl.text = self.messageArray[i]
+//                            messageLbl.sizeToFit()
+//                            messageLbl.layer.zPosition = 20
+//                            messageLbl.frame.origin.x = (self.resultsScrollView.frame.size.width - self.messageX) - messageLbl.frame.size.width - 5
+//                            messageLbl.frame.origin.y = self.messageY
+//                            self.resultsScrollView.addSubview(messageLbl)
+//                            self.messageY += messageLbl.frame.size.height + 30
+//                            
+//                            //format a nice chat bubble for the text label
+//                            let frameLbl:UILabel = UILabel()
+//                            frameLbl.frame.size = CGSizeMake(messageLbl.frame.size.width + 10, messageLbl.frame.size.height + 10)
+//                            frameLbl.frame.origin.x = (self.resultsScrollView.frame.size.width - self.frameX) - frameLbl.frame.size.width - 5
+//                            frameLbl.frame.origin.y = self.frameY
+//                            //frameLbl.backgroundColor = UIColor.blueColor()
+//                            //frameLbl.backgroundColor = UIColor(netHex: 0x3BB3E6)
+//                            print("i is \(i)")
+//                            if (i % 2 > 0) {
+//                                frameLbl.backgroundColor = UIColor(netHex: 0xFBCB55)
+//                            } else {
+//                                frameLbl.backgroundColor = UIColor(netHex: 0x3BB3E6)
+//                            }
+//                            frameLbl.layer.masksToBounds = true
+//                            frameLbl.layer.cornerRadius = 10
+//                            self.resultsScrollView.addSubview(frameLbl)
+//                            self.frameY += frameLbl.frame.size.height + 20
+//                            
+//                            //display user's image with their message
+//                            let img:UIImageView = UIImageView()
+//                            if self.userParticipantType == "seecretViewer" {
+//                                img.image = UIImage(named: "profileIcon")
+//                            } else {
+//                                img.image = self.myImg
+//                            }
+//                            img.frame.size = CGSizeMake(34, 34)
+//                            img.frame.origin.x = (self.resultsScrollView.frame.size.width - self.imgX) - img.frame.size.width
+//                            img.frame.origin.y = self.imgY
+//                            img.layer.zPosition = 30
+//                            img.layer.cornerRadius = img.frame.size.width/2
+//                            img.clipsToBounds = true
+//                            self.resultsScrollView.addSubview(img)
+//                            self.imgY += frameLbl.frame.size.height + 20
+//                            
+//                            
+//                            self.resultsScrollView.contentSize = CGSizeMake(theWidth, self.messageY)
+//                            
+//                        } else {
+//                            //do the same for the other person
+//                            
+//                            let otherUserDisplaynameLbl:UILabel = UILabel()
+//                            otherUserDisplaynameLbl.frame = CGRectMake(0, 0, self.resultsScrollView.frame.size.width-94, CGFloat.max)
+//                            otherUserDisplaynameLbl.textAlignment = NSTextAlignment.Left
+//                            otherUserDisplaynameLbl.numberOfLines = 1
+//                            otherUserDisplaynameLbl.font = UIFont(name: "Helvetica Neuse" , size: 14)
+//                            otherUserDisplaynameLbl.text = self.senderDisplaynameArray[i]
+//                            //otherUserDisplaynameLbl.backgroundColor = UIColor.blueColor()
+//                            otherUserDisplaynameLbl.sizeToFit()
+//                            otherUserDisplaynameLbl.layer.zPosition = 20
+//                            otherUserDisplaynameLbl.frame.origin.x = self.messageX + 6.5
+//                            otherUserDisplaynameLbl.frame.origin.y = self.messageY - 25
+//                            self.resultsScrollView.addSubview(otherUserDisplaynameLbl)
+//                            
+//                            
+//                            
+//                            let messageLbl:UILabel = UILabel()
+//                            messageLbl.frame = CGRectMake(0, 0, self.resultsScrollView.frame.size.width-94, CGFloat.max)
+//                            //messageLbl.backgroundColor = UIColor.groupTableViewBackgroundColor()
+//                            print("i is \(i)")
+//                            if (i % 2 > 0) {
+//                                messageLbl.backgroundColor = UIColor(netHex: 0xFBCB55)
+//                            } else {
+//                                messageLbl.backgroundColor = UIColor(netHex: 0x3BB3E6)
+//                            }
+//                            
+//                            messageLbl.lineBreakMode = NSLineBreakMode.ByWordWrapping
+//                            messageLbl.textAlignment = NSTextAlignment.Left
+//                            messageLbl.numberOfLines = 0
+//                            messageLbl.font = UIFont(name: "Helvetica Neuse" , size: 17)
+//                            //messageLbl.textColor = UIColor.blackColor()
+//                            messageLbl.textColor = UIColor.blackColor()
+//                            messageLbl.text = self.messageArray[i]
+//                            messageLbl.sizeToFit()
+//                            messageLbl.layer.zPosition = 20
+//                            messageLbl.frame.origin.x = self.messageX + 6.5
+//                            messageLbl.frame.origin.y = self.messageY
+//                            self.resultsScrollView.addSubview(messageLbl)
+//                            self.messageY += messageLbl.frame.size.height + 30
+//                            let frameLbl:UILabel = UILabel()
+//                            frameLbl.frame = CGRectMake(self.frameX,self.frameY,messageLbl.frame.size.width + 10, messageLbl.frame.size.height + 10)
+//                            //frameLbl.backgroundColor = UIColor.groupTableViewBackgroundColor()
+//                            if (i % 2 > 0) {
+//                                frameLbl.backgroundColor = UIColor(netHex: 0xFBCB55)
+//                            } else {
+//                                frameLbl.backgroundColor = UIColor(netHex: 0x3BB3E6)
+//                            }
+//                            //frameLbl.backgroundColor = UIColor(netHex: 0xFBCB55)
+//                            frameLbl.frame.origin.x = self.messageX + 2
+//                            frameLbl.layer.masksToBounds = true
+//                            frameLbl.layer.cornerRadius = 10
+//                            self.resultsScrollView.addSubview(frameLbl)
+//                            self.frameY += frameLbl.frame.size.height + 20
+//                            let img:UIImageView = UIImageView()
+//                            img.image = self.otherImg
+//                            img.frame = CGRectMake(self.imgX, self.imgY, 34, 34)
+//                            img.layer.zPosition = 30
+//                            img.layer.cornerRadius = img.frame.size.width/2
+//                            img.clipsToBounds = true
+//                            self.resultsScrollView.addSubview(img)
+//                            self.imgY += frameLbl.frame.size.height + 20
+//                            self.resultsScrollView.contentSize = CGSizeMake(theWidth, self.messageY)
+//                        }
+//                        //all messages start poisitioning at the end of the scrollview (Kakao does not do this)
+//                        let bottomOffset:CGPoint = CGPointMake(0,self.resultsScrollView.contentSize.height - self.resultsScrollView.bounds.size.height)
+//                        self.resultsScrollView.setContentOffset(bottomOffset, animated: false)
+//   
+//                    }
+//                    
+//                }
+//              
+//                dispatch_async(dispatch_get_main_queue(), {
+//                    self.resumeApp()
+//                })
+//                
+//            } 
         
     }
     
@@ -881,12 +882,12 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
             let query:PFQuery = PFQuery(className: "Block")
             query.whereKey("user", equalTo: userName)
             query.whereKey("blocked", equalTo: otherName)
-            query.findObjectsInBackgroundWithBlock({
-                (objects:[AnyObject]?, error:NSError?) -> Void in
-                for object in objects! {
-                    object.deleteInBackground()
-                }
-            })
+//            query.findObjectsInBackgroundWithBlock({
+//                (objects:[AnyObject]?, error:NSError?) -> Void in
+//                for object in objects! {
+//                    object.deleteInBackground()
+//                }
+//            })
             self.blockBtn.title = "Block"
             mLbl.text = "Type a message..."
             messageTextView.text = ""

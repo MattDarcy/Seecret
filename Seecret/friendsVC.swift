@@ -16,6 +16,7 @@
 
 
 import UIKit
+import Parse
 import CoreData
 
 let userObjectID = PFUser.currentUser()!.objectId!
@@ -105,57 +106,57 @@ class friendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, N
             ***********************************************************************************************/
             var predicate = NSPredicate(format: "userObjectId = '"+userObjectID+"'")
             var query = PFQuery(className: "Friends", predicate: predicate)
-            query.findObjectsInBackgroundWithBlock {
-                (objects:[AnyObject]?, error:NSError?) -> Void in
-                if let objs = objects {
-                    for object in objs {
-                        self.resultsObjectIdsArray = (object["friendsObjectIds"] as! Array!)
-                        self.resultsDisplayNameArray = (object["friendsDisplayNames"] as! Array!)
-                    }
-                }
-                for (self.i = 0; self.i < self.resultsObjectIdsArray.count; self.i++) {
-                    predicate = NSPredicate(format: "objectId = '"+self.resultsObjectIdsArray[self.i]+"'")
-                    query = PFQuery(className: "_User", predicate: predicate)
-                    query.findObjectsInBackgroundWithBlock({
-                        (objects:[AnyObject]?, error:NSError?) -> Void in
-                        if let objs = objects {
-                            for object in objs {
-                                self.resultsUsernameArray.append(object.username! as String!)
-                                self.resultsImageFiles.append(object["photo"] as! PFFile)
-                                
-                                let context = self.context
-                                let ent = NSEntityDescription.entityForName("Friend", inManagedObjectContext: context)
-                                let nItem2 = Friend(entity: ent!, insertIntoManagedObjectContext: context)
-                                
-                                var name = self.resultsDisplayNameArray[self.j]
-                                nItem2.friendDisplayName = self.resultsDisplayNameArray[self.j]
-                                nItem2.friendObjectId = self.resultsObjectIdsArray[self.j]
-                                print("friendDisplayName saved in data is \(nItem2.friendDisplayName)")
-                                print("friendObjectId saved in data is \(nItem2.friendObjectId)")
-                                
-                                nItem2.friendUsername = object.username! as String!
-                                print("friendUsername saved in data is \(nItem2.friendUsername)")
-                                
-                                let userImageFile = object["photo"] as! PFFile
-                                userImageFile.getDataInBackgroundWithBlock({
-                                    (imageData:NSData?, error:NSError?) -> Void in
-                                    if error == nil {
-                                        let image = UIImage(data: imageData!)
-                                        nItem2.friendPhoto = UIImagePNGRepresentation(image!)!
-                                        self.coreDataContent = true
-                                        do {
-                                            try context.save()
-                                        } catch {
-                                            print("problem");
-                                        }
-                                    }
-                                })
-                                self.j++
-                            }
-                        }
-                    })
-                }
-            }
+//            query.findObjectsInBackgroundWithBlock {
+//                (objects:[AnyObject]?, error:NSError?) -> Void in
+//                if let objs = objects {
+//                    for object in objs {
+//                        self.resultsObjectIdsArray = (object["friendsObjectIds"] as! Array!)
+//                        self.resultsDisplayNameArray = (object["friendsDisplayNames"] as! Array!)
+//                    }
+//                }
+//                for (self.i = 0; self.i < self.resultsObjectIdsArray.count; self.i++) {
+//                    predicate = NSPredicate(format: "objectId = '"+self.resultsObjectIdsArray[self.i]+"'")
+//                    query = PFQuery(className: "_User", predicate: predicate)
+//                    query.findObjectsInBackgroundWithBlock({
+//                        (objects:[AnyObject]?, error:NSError?) -> Void in
+//                        if let objs = objects {
+//                            for object in objs {
+//                                self.resultsUsernameArray.append(object.username! as String!)
+//                                self.resultsImageFiles.append(object["photo"] as! PFFile)
+//                                
+//                                let context = self.context
+//                                let ent = NSEntityDescription.entityForName("Friend", inManagedObjectContext: context)
+//                                let nItem2 = Friend(entity: ent!, insertIntoManagedObjectContext: context)
+//                                
+//                                var name = self.resultsDisplayNameArray[self.j]
+//                                nItem2.friendDisplayName = self.resultsDisplayNameArray[self.j]
+//                                nItem2.friendObjectId = self.resultsObjectIdsArray[self.j]
+//                                print("friendDisplayName saved in data is \(nItem2.friendDisplayName)")
+//                                print("friendObjectId saved in data is \(nItem2.friendObjectId)")
+//                                
+//                                nItem2.friendUsername = object.username! as String!
+//                                print("friendUsername saved in data is \(nItem2.friendUsername)")
+//                                
+//                                let userImageFile = object["photo"] as! PFFile
+//                                userImageFile.getDataInBackgroundWithBlock({
+//                                    (imageData:NSData?, error:NSError?) -> Void in
+//                                    if error == nil {
+//                                        let image = UIImage(data: imageData!)
+//                                        nItem2.friendPhoto = UIImagePNGRepresentation(image!)!
+//                                        self.coreDataContent = true
+//                                        do {
+//                                            try context.save()
+//                                        } catch {
+//                                            print("problem");
+//                                        }
+//                                    }
+//                                })
+//                                self.j++
+//                            }
+//                        }
+//                    })
+//                }
+//            }
         }
     }
 

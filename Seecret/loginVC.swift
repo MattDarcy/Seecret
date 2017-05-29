@@ -20,6 +20,7 @@ var savedPassword:String = ""
 
 
 import UIKit
+import Parse
 import ReachabilitySwift
 import CoreData
 
@@ -215,9 +216,9 @@ class loginVC: UIViewController, UITextFieldDelegate, NSFetchedResultsController
                     } catch {
                         print("problem");
                     }
-                    let installation: PFInstallation = PFInstallation.currentInstallation()
-                    installation["user"] = PFUser.currentUser()
-                    installation.saveInBackground()
+//                    let installation: PFInstallation = PFInstallation.currentInstallation()
+                    //installation["user"] = PFUser.currentUser()
+                    //installation.saveInBackground()
                     dispatch_async(dispatch_get_main_queue(), {
                         self.resumeApp()
                     })
