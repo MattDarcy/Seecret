@@ -15,6 +15,7 @@
 		0AB4317D1BC795C700A090B5 /* Friend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB4317C1BC795C700A090B5 /* Friend.swift */; };
 		0AD0EAF51BC26BB1000EC56C /* SeecretCoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0AD0EAF31BC26BB1000EC56C /* SeecretCoreDataModel.xcdatamodeld */; };
 		0AD6DF5A1BBBEEFB0035DD2F /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AD6DF591BBBEEFB0035DD2F /* SWRevealViewController.m */; };
+		7D7402E8BA778E1283B8873D /* Pods_Seecret.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C30B3CDBB10C9FBAC935B05 /* Pods_Seecret.framework */; };
 		A11448461B7DA90F00B2EEF5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11448451B7DA90F00B2EEF5 /* AppDelegate.swift */; };
 		A11448481B7DA90F00B2EEF5 /* loginVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11448471B7DA90F00B2EEF5 /* loginVC.swift */; };
 		A114484D1B7DA90F00B2EEF5 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A114484C1B7DA90F00B2EEF5 /* Images.xcassets */; };
@@ -98,7 +99,6 @@
 		C7743F491BD76C5C00003A5D /* tabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7743F481BD76C5C00003A5D /* tabBarController.swift */; };
 		C781173C1BE0AE0500000CB3 /* chatParticipantCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C781173B1BE0AE0500000CB3 /* chatParticipantCell.swift */; };
 		C781173E1BE0C4EF00000CB3 /* chatParticipantsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C781173D1BE0C4EF00000CB3 /* chatParticipantsVC.swift */; };
-		F23B69E5074A48BBB2DEB8E6 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7928A5F08338E9CB85D282A4 /* Pods.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -123,7 +123,9 @@
 		0AD0EAF41BC26BB1000EC56C /* SeecretCoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SeecretCoreDataModel.xcdatamodel; sourceTree = "<group>"; };
 		0AD6DF581BBBEEFB0035DD2F /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
 		0AD6DF591BBBEEFB0035DD2F /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
+		4C30B3CDBB10C9FBAC935B05 /* Pods_Seecret.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Seecret.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7928A5F08338E9CB85D282A4 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9752043A2265597EE6202F67 /* Pods-Seecret.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Seecret.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Seecret/Pods-Seecret.debug.xcconfig"; sourceTree = "<group>"; };
 		A11448401B7DA90F00B2EEF5 /* Seecret.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Seecret.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A11448441B7DA90F00B2EEF5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A11448451B7DA90F00B2EEF5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -206,7 +208,6 @@
 		A1B601C91B984961004943E3 /* Icon-98@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-98@2x.png"; sourceTree = "<group>"; };
 		A1B601EF1B9849B3004943E3 /* splash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = splash.png; sourceTree = "<group>"; };
 		A1B601F11B98551E004943E3 /* settingsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = settingsVC.swift; sourceTree = "<group>"; };
-		A86A2C2FC338F5E22D567232 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		C719F1451BD7A75B00957F87 /* Login.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Login.swift; path = ../Login.swift; sourceTree = "<group>"; };
 		C72D637F1C3B166D00229F42 /* IJReachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IJReachability.framework; path = "Pods/../build/Debug-iphoneos/IJReachability.framework"; sourceTree = "<group>"; };
 		C7389B4F1BE778440042CB7C /* profileVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = profileVC.swift; sourceTree = "<group>"; };
@@ -214,7 +215,7 @@
 		C7743F481BD76C5C00003A5D /* tabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = tabBarController.swift; sourceTree = "<group>"; };
 		C781173B1BE0AE0500000CB3 /* chatParticipantCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = chatParticipantCell.swift; sourceTree = "<group>"; };
 		C781173D1BE0C4EF00000CB3 /* chatParticipantsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = chatParticipantsVC.swift; sourceTree = "<group>"; };
-		F92CE67DB83B2BDF48DE4C96 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		FE30F3AF3C8F2E3FA892A376 /* Pods-Seecret.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Seecret.release.xcconfig"; path = "Pods/Target Support Files/Pods-Seecret/Pods-Seecret.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -236,7 +237,7 @@
 				A114486F1B7DAFEF00B2EEF5 /* AudioToolbox.framework in Frameworks */,
 				A114486C1B7DAFD000B2EEF5 /* Parse.framework in Frameworks */,
 				A114486B1B7DAFD000B2EEF5 /* Bolts.framework in Frameworks */,
-				F23B69E5074A48BBB2DEB8E6 /* Pods.framework in Frameworks */,
+				7D7402E8BA778E1283B8873D /* Pods_Seecret.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -307,7 +308,7 @@
 				A11448421B7DA90F00B2EEF5 /* Seecret */,
 				A11448581B7DA90F00B2EEF5 /* SeecretTests */,
 				A11448411B7DA90F00B2EEF5 /* Products */,
-				B81F32ADB7DA383423B13981 /* Pods */,
+				A1AC2091453FCF9F13F286DA /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -387,6 +388,7 @@
 				A11448691B7DAFD000B2EEF5 /* Bolts.framework */,
 				A114486A1B7DAFD000B2EEF5 /* Parse.framework */,
 				7928A5F08338E9CB85D282A4 /* Pods.framework */,
+				4C30B3CDBB10C9FBAC935B05 /* Pods_Seecret.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -432,6 +434,15 @@
 				A17949C41B996A6800284BE1 /* seecretCell.swift */,
 			);
 			name = Seecrets;
+			sourceTree = "<group>";
+		};
+		A1AC2091453FCF9F13F286DA /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				9752043A2265597EE6202F67 /* Pods-Seecret.debug.xcconfig */,
+				FE30F3AF3C8F2E3FA892A376 /* Pods-Seecret.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 		A1B601991B984961004943E3 /* icons */ = {
@@ -566,15 +577,6 @@
 			path = AppIcon.appiconset;
 			sourceTree = "<group>";
 		};
-		B81F32ADB7DA383423B13981 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				A86A2C2FC338F5E22D567232 /* Pods.debug.xcconfig */,
-				F92CE67DB83B2BDF48DE4C96 /* Pods.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -582,10 +584,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A114485F1B7DA90F00B2EEF5 /* Build configuration list for PBXNativeTarget "Seecret" */;
 			buildPhases = (
+				EE667FBA7BC2E76F64A8A746 /* [CP] Check Pods Manifest.lock */,
 				A114483C1B7DA90F00B2EEF5 /* Sources */,
 				A114483D1B7DA90F00B2EEF5 /* Frameworks */,
 				A114483E1B7DA90F00B2EEF5 /* Resources */,
-				BEA4791D5E629B74F04CF403 /* Embed Pods Frameworks */,
+				2BBCFFFBF61C5118A06C2753 /* [CP] Embed Pods Frameworks */,
+				771984CE1BD183A6F92AB350 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -723,19 +727,49 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		BEA4791D5E629B74F04CF403 /* Embed Pods Frameworks */ = {
+		2BBCFFFBF61C5118A06C2753 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Seecret/Pods-Seecret-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		771984CE1BD183A6F92AB350 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Seecret/Pods-Seecret-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		EE667FBA7BC2E76F64A8A746 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -899,7 +933,7 @@
 		};
 		A11448601B7DA90F00B2EEF5 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A86A2C2FC338F5E22D567232 /* Pods.debug.xcconfig */;
+			baseConfigurationReference = 9752043A2265597EE6202F67 /* Pods-Seecret.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -926,7 +960,7 @@
 		};
 		A11448611B7DA90F00B2EEF5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F92CE67DB83B2BDF48DE4C96 /* Pods.release.xcconfig */;
+			baseConfigurationReference = FE30F3AF3C8F2E3FA892A376 /* Pods-Seecret.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

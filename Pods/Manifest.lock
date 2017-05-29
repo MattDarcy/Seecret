@@ -1,19 +1,18 @@
 PODS:
-  - ReachabilitySwift (2.3.3)
+  - Bolts/Tasks (1.8.4)
+  - Parse (1.14.4):
+    - Bolts/Tasks (~> 1.8)
+  - ReachabilitySwift (2.4)
 
 DEPENDENCIES:
-  - ReachabilitySwift (from `https://github.com/ashleymills/Reachability.swift`)
-
-EXTERNAL SOURCES:
-  ReachabilitySwift:
-    :git: https://github.com/ashleymills/Reachability.swift
-
-CHECKOUT OPTIONS:
-  ReachabilitySwift:
-    :commit: 217ba79579efbfebd66691666b782ecd04fe5f5b
-    :git: https://github.com/ashleymills/Reachability.swift
+  - Parse
+  - ReachabilitySwift (~> 2.4)
 
 SPEC CHECKSUMS:
-  ReachabilitySwift: e0f6b6f280effb47731acfaaa2d5ffe223703793
+  Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
+  Parse: b0aa91d2c435e53d4a9af26e741e014c9b35c42e
+  ReachabilitySwift: dc7452dab85ff881904215e1a113326ad8d07beb
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: 187f7bdb84171128cb1c704f9cb60ced900a2455
+
+COCOAPODS: 1.2.1
