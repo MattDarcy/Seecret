@@ -13,6 +13,7 @@
 
 
 import UIKit
+import Parse
 
 class firstNavConVC: UINavigationController {
 

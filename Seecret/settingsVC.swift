@@ -12,6 +12,7 @@
 
 
 import UIKit
+import Parse
 
 class settingsVC: UIViewController {
     

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Parse
 
 class profileVC: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
 
@@ -71,7 +72,7 @@ class profileVC: UIViewController, UINavigationControllerDelegate, UIImagePicker
                 print("check3")
                 print("Photo updated at server")
                 user["photo"] = imageFile
-                user.save()
+//                user.save()
                 print("check4")
  
             }
