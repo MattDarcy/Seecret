@@ -10,8 +10,6 @@ import Foundation
 import CoreData
 @objc(Login)
 class Login: NSManagedObject {
-
     @NSManaged var username: String
     @NSManaged var password: String
-
 }

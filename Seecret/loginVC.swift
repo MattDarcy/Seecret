@@ -67,11 +67,6 @@ class loginVC: UIViewController, UITextFieldDelegate, NSFetchedResultsController
     
     var coreDataContent:Bool = false
     
-    
-    
-    
-    
-    
     @IBOutlet weak var usernameTxt: UITextField!
     @IBOutlet weak var passwordTxt: UITextField!
     @IBOutlet weak var loginBtn: UIButton!
@@ -89,16 +84,14 @@ class loginVC: UIViewController, UITextFieldDelegate, NSFetchedResultsController
         var err:NSError?
         do {
             user = try context?.executeFetchRequest(request) as! [Login]
-            //find out how to structure this in Swift 2
             print("The user retained in core data is \(user)")
             
         } catch let err1 as NSError {
             err = err1
         }
         if (err != nil) {
-            print("Problem with loading data")
+            print("Problem loading data")
         }
-        
         
         frc = getFetchResultsController()
         frc.delegate = self
@@ -106,18 +99,11 @@ class loginVC: UIViewController, UITextFieldDelegate, NSFetchedResultsController
         //if there is a saved username in core data, populate text box
         let loginRequest = NSFetchRequest(entityName: "Login")
         loginRequest.fetchLimit = 1
-        if let user = try! context!.executeFetchRequest(loginRequest).first as? [Login] {
-            print("there is data")
-            //print("username is \(user.username) and password is \(user.password)")
-            //usernameTxt.text = user.username
-            //passwordTxt.text = user.password
-        } else {
-            print("there is no data")
-        }
+//        if let user = try! context!.executeFetchRequest(loginRequest).first as? [Login] {
+//            usernameTxt.text = user.
+//            passwordTxt.text = user.password
+//        }
 
-        
-        
-        
         let value = UIInterfaceOrientation.Portrait.rawValue
         UIDevice.currentDevice().setValue(value, forKey: "orientation")
         loginBtn.layer.cornerRadius = 7
@@ -134,12 +120,9 @@ class loginVC: UIViewController, UITextFieldDelegate, NSFetchedResultsController
         preTreatView()
     }
     
-    
     /***********************************************************************************************
     //MARK: Log in with email and password. Checks for connectivity and then login success/error
     ***********************************************************************************************/
-    
-    //Parse will automatically try and back-off if the connection is not made. It is best practices for networking.
     
     @IBAction func loginBtn(sender: AnyObject) {
         self.errorMsg.text = ""
@@ -216,18 +199,16 @@ class loginVC: UIViewController, UITextFieldDelegate, NSFetchedResultsController
                     } catch {
                         print("problem");
                     }
-//                    let installation: PFInstallation = PFInstallation.currentInstallation()
-                    //installation["user"] = PFUser.currentUser()
-                    //installation.saveInBackground()
+                    let installation: PFInstallation = PFInstallation.currentInstallation()!
+                    installation["user"] = PFUser.currentUser()
+                    installation.saveInBackground()
                     dispatch_async(dispatch_get_main_queue(), {
                         self.resumeApp()
                     })
                     self.performSegueWithIdentifier("goToTabsVC", sender: self)
                 }
             }
-
         })
-
     }
 
     /***********************************************************************************************
@@ -247,7 +228,6 @@ class loginVC: UIViewController, UITextFieldDelegate, NSFetchedResultsController
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         self.view.endEditing(true)
     }
-
     
     /***********************************************************************************************
     //MARK: Hide navigation bar back button when this view loads from another screen
@@ -259,13 +239,5 @@ class loginVC: UIViewController, UITextFieldDelegate, NSFetchedResultsController
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        
     }
-
 }
-
-/***********************************************************************************************
-//MARK: CODE CLOSET
-***********************************************************************************************/
-
-

@@ -19,8 +19,7 @@ import UIKit
 import Parse
 import CoreData
 
-let userObjectID = PFUser.currentUser()!.objectId!
-let userName = PFUser.currentUser()!.username!
+
 
 //NSFetchedResultsControllerDelegate for CoreData
 class friendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, NSFetchedResultsControllerDelegate {
@@ -104,8 +103,11 @@ class friendsVC: UIViewController, UITableViewDelegate, UITableViewDataSource, N
             /***********************************************************************************************
             //MARK: Query friends list for current user, then individual friends' data, save to CoreData and reload
             ***********************************************************************************************/
-            var predicate = NSPredicate(format: "userObjectId = '"+userObjectID+"'")
-            var query = PFQuery(className: "Friends", predicate: predicate)
+             //let userObjectID = PFUser.currentUser()!.objectId!
+             //let userName = PFUser.currentUser()!.username!
+            
+             //var predicate = NSPredicate(format: "userObjectId = '"+userObjectID+"'")
+            //var query = PFQuery(className: "Friends", predicate: predicate)
 //            query.findObjectsInBackgroundWithBlock {
 //                (objects:[AnyObject]?, error:NSError?) -> Void in
 //                if let objs = objects {

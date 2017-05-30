@@ -125,7 +125,7 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
         
         self.navigationItem.rightBarButtonItem = button
         
-        let backItem = UIBarButtonItem(title: "", style: .Bordered, target: nil, action: nil)
+        let backItem = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.Plain, target: nil, action: nil)
         navigationItem.backBarButtonItem = backItem
     }
 
@@ -171,8 +171,8 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
 //MARK: Retrieve needed user/other data
 ***********************************************************************************************/
     func getUserData() {
-        var predicate = NSPredicate(format: "objectId = '"+userObjectID+"'")
-        var query = PFQuery(className: "_User", predicate: predicate)
+        //var predicate = NSPredicate(format: "objectId = '"+userObjectID+"'")
+        //var query = PFQuery(className: "_User", predicate: predicate)
 //        query.findObjectsInBackgroundWithBlock({
 //            (objects:[AnyObject]?, error:NSError?) -> Void in
 //            if let objs = objects {
@@ -522,7 +522,7 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
         } else {
             
             let query = PFQuery(className: "_User")
-            query.whereKey("username", equalTo: userName)
+            //query.whereKey("username", equalTo: userName)
 //            query.findObjectsInBackgroundWithBlock {
 //                (objects:[AnyObject]?, error:NSError?) -> Void in
 //                self.resultsImageFiles.removeAll(keepCapacity: false)
@@ -823,8 +823,8 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
                 let messageDBTable = PFObject(className: "Messages")
                 messageDBTable["chatObjectId"] = chatObjId
                 messageDBTable["chatTitle"] = "\(userDisplayName), \(otherDisplayName)"
-                messageDBTable["senderObjectId"] = userObjectID
-                messageDBTable["senderUsername"] = userName
+//                messageDBTable["senderObjectId"] = userObjectID
+//                messageDBTable["senderUsername"] = userName
                 messageDBTable["senderDisplayName"] = userDisplayName
                 messageDBTable["messageText"] = self.messageTextView.text
                 let saveMessageForPush = self.messageTextView.text
@@ -873,14 +873,14 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
         if blockBtn.title == "Block" {
             //add record to parse class to block otherUser
             let addBlock = PFObject(className: "Block")
-            addBlock.setObject(userName, forKey: "user")
+            //    addBlock.setObject(userName, forKey: "user")
             addBlock.setObject(otherName, forKey: "blocked")
             addBlock.saveInBackground()
             self.blockBtn.title = "Unblock"
         } else {
             //add record to parse class to unblock otherUser
             let query:PFQuery = PFQuery(className: "Block")
-            query.whereKey("user", equalTo: userName)
+            //   query.whereKey("user", equalTo: userName)
             query.whereKey("blocked", equalTo: otherName)
 //            query.findObjectsInBackgroundWithBlock({
 //                (objects:[AnyObject]?, error:NSError?) -> Void in
@@ -898,10 +898,10 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
 //MARK: Report user - necessary for App Store
 **********************************************************************************************/
     func reportBtn_click() {
-        let addReport = PFObject(className: "Report")
-        addReport.setObject(userName, forKey: "user")
-        addReport.setObject(otherName, forKey: "reported")
-        addReport.saveInBackground()
+        //let addReport = PFObject(className: "Report")
+        //   addReport.setObject(userName, forKey: "user")
+        //   addReport.setObject(otherName, forKey: "reported")
+        //   addReport.saveInBackground()
         
     }
     

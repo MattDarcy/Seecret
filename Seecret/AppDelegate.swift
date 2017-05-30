@@ -37,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let parseConfiguration = ParseClientConfiguration(block: { (ParseMutableClientConfiguration) -> Void in
             ParseMutableClientConfiguration.applicationId = "kuAesCGyirSULqKqgqIw"
-            ParseMutableClientConfiguration.clientKey = "tXXWzwP5gAupgRtaRA2i"
+            ParseMutableClientConfiguration.clientKey = "OAiVBxduwT0fiA0kCMsF"
             ParseMutableClientConfiguration.server = "https://seecretserver.herokuapp.com/parse"
         })
         
@@ -78,22 +78,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("I got \(chatObjIdToUpdateOutApp) and \(chatMessageToUpdateOutApp))")
             
         }
-
         
-        if application.respondsToSelector("registerUserNotificationSettings:") {
-            if #available(iOS 8.0, *) {
-                let types:UIUserNotificationType = ([.Alert, .Sound, .Badge])
-                let settings:UIUserNotificationSettings = UIUserNotificationSettings(forTypes: types, categories: nil)
-                application.registerUserNotificationSettings(settings)
-                application.registerForRemoteNotifications()
-            } else {
-                application.registerForRemoteNotificationTypes([.Alert, .Sound, .Badge])
-            }
-        }
-        else {
-            // Register for Push Notifications before iOS 8
-            application.registerForRemoteNotificationTypes([.Alert, .Sound, .Badge])
-        }
+        let types:UIUserNotificationType = ([.Alert, .Sound, .Badge])
+        let settings:UIUserNotificationSettings = UIUserNotificationSettings(forTypes: types, categories: nil)
+        application.registerUserNotificationSettings(settings)
+        application.registerForRemoteNotifications()
+
         return true
     }
 
@@ -232,12 +222,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
-
-
 }
-
-/***********************************************************************************************
-//MARK: CODE CLOSET
-***********************************************************************************************/
-
 

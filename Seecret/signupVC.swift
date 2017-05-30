@@ -154,8 +154,6 @@ class signupVC: UIViewController, UINavigationControllerDelegate, UIImagePickerC
         }
     }
     
-    
-    
     /***********************************************************************************************
     //MARK: Parse Sign Up User Function with Text Fields and Image
     ***********************************************************************************************/
@@ -204,17 +202,8 @@ class signupVC: UIViewController, UINavigationControllerDelegate, UIImagePickerC
             }
         })
     }
-
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-    
-
-    
 }
-
-/***********************************************************************************************
-//MARK: CODE CLOSET
-***********************************************************************************************/
-

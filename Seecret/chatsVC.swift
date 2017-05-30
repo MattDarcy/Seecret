@@ -23,16 +23,16 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate, NSF
      ***********************************************************************************************/
     var activityIndicator:UIActivityIndicatorView = UIActivityIndicatorView()
     
-    func pauseApp() {
-        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0,0,50,50))
-        activityIndicator.center = self.view.center
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
-        activityIndicator.layer.zPosition = 1
-        view.addSubview(activityIndicator)
-        activityIndicator.startAnimating()
-        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
-    }
+//    func pauseApp() {
+//        activityIndicator = UIActivityIndicatorView(frame: CGRectMake(0,0,50,50))
+//        activityIndicator.center = self.view.center
+//        activityIndicator.hidesWhenStopped = true
+//        activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
+//        activityIndicator.layer.zPosition = 1
+//        view.addSubview(activityIndicator)
+//        activityIndicator.startAnimating()
+//        UIApplication.sharedApplication().beginIgnoringInteractionEvents()
+//    }
     
     func resumeApp() {
         activityIndicator.stopAnimating()
@@ -127,8 +127,8 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate, NSF
         self.tabBarController?.navigationItem.title = "Chats"
 //show the add button programatically
         self.tabBarController?.navigationItem.setRightBarButtonItem(UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addChatBtn_click"), animated: true)
-        self.userObjectID = PFUser.currentUser()!.objectId!
-        self.userDisplayName = PFUser.currentUser()?.objectForKey("displayName") as! String
+        //self.userObjectID = PFUser.currentUser()!.objectId!
+        //self.userDisplayName = PFUser.currentUser()?.objectForKey("displayName") as! String
     }
     
     func getMessageFunc() {
@@ -180,7 +180,7 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate, NSF
     }
     
     func queryChats() {
-        pauseApp()
+        //pauseApp()
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), { 
             self.clearArrayContents()
@@ -440,7 +440,7 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate, NSF
                 chatObj["chatParticipantDisplayNames"] = [self.userDisplayName]
                 chatObj["chatTitle"] = textF.text
                 chatObj["adminIds"] = [self.userObjectID]
-                chatObj["adminUsernames"] = [userName]
+                //chatObj["adminUsernames"] = [userName]
                 
                 
                 //instead of a simple save, we do a block in order to capture the objectId within the same transaction
@@ -455,7 +455,7 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate, NSF
                             msgObj["chatObjectId"] = chatId
                             msgObj["chatTitle"] = textF.text
                             msgObj["senderObjectId"] = self.userObjectID
-                            msgObj["senderUsername"] = userName
+                            //        msgObj["senderUsername"] = userName
                             msgObj["messageText"] = "The group has been created: \(textF.text)"
                             msgObj.saveInBackground()
                             //and also save this chat id in the user class to say that this user has participation rights

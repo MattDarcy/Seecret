@@ -77,7 +77,7 @@ class seecretsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 //MARK: Query Parse for all Seecrets for this user
 ***********************************************************************************************/
         let query = PFQuery(className: "Seecrets")
-        query.whereKey("viewerObjectId", equalTo: userObjectID)
+        //   query.whereKey("viewerObjectId", equalTo: userObjectID)
 
         query.addAscendingOrder("createdAt")
         
@@ -162,7 +162,7 @@ class seecretsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
             (object, error) -> Void in
             currentUser!.fetchIfNeededInBackgroundWithBlock {
                 (result, error) -> Void in
-                self.accountStatus = currentUser?.objectForKey("accountStatus") as! String
+                //self.accountStatus = currentUser?.objectForKey("accountStatus") as! String
             }
         }
 //print("accountStatus is \(accountStatus) and seecretCount is \(self.seecretCount)")
@@ -179,191 +179,178 @@ class seecretsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 //MARK: Not premium and has >0 Seecrets
 ***********************************************************************************************/
         if accountStatus == "free" && self.seecretCount > 0 {
-            if #available(iOS 8.0, *) {
-                let alert = UIAlertController(title: "Upgrade?", message: "You must upgrade to have more than 1 active seecret.", preferredStyle: UIAlertControllerStyle.Alert)
-                alert.addAction(UIAlertAction(title: "Let's go!", style: .Default, handler: {
-                    (action) -> Void in
-                    //instead of segue to the page, just set the bool as true here from the uialert action
-                    //there is some error with xcode sigabrt and examples online do not help
-                    PFUser.currentUser()!["accountStatus"] = "premium"
-                    PFUser.currentUser()!.saveInBackground()
-                    self.accountStatus = "premium"
-                    self.resultsTable.reloadData()
-                }))
-                alert.addAction(UIAlertAction(title: "Nevermind", style: .Default, handler: {
-                    (action) -> Void in
-                }))
-                
-                self.presentViewController(alert, animated: true, completion: nil)
-            } else {
-                // Fallback on earlier versions
-            }
+            let alert = UIAlertController(title: "Upgrade?", message: "You must upgrade to have more than 1 active seecret.", preferredStyle: UIAlertControllerStyle.Alert)
+            alert.addAction(UIAlertAction(title: "Let's go!", style: .Default, handler: {
+                (action) -> Void in
+                //instead of segue to the page, just set the bool as true here from the uialert action
+                //there is some error with xcode sigabrt and examples online do not help
+                PFUser.currentUser()!["accountStatus"] = "premium"
+                PFUser.currentUser()!.saveInBackground()
+                self.accountStatus = "premium"
+                self.resultsTable.reloadData()
+            }))
+            alert.addAction(UIAlertAction(title: "Nevermind", style: .Default, handler: {
+                (action) -> Void in
+            }))
+            
+            self.presentViewController(alert, animated: true, completion: nil)
 /***********************************************************************************************
 //MARK: Not Premium and No Seecrets
 ***********************************************************************************************/
             
         } else if accountStatus == "free" {
-            if #available(iOS 8.0, *) {
-                let alert = UIAlertController(title: "New Seecret", message: "As a basic user, you may have 1 seecret at a time.", preferredStyle: UIAlertControllerStyle.Alert)
-                alert.addAction(UIAlertAction(title: "Get my seecret!", style: .Default, handler: {
-                    (action) -> Void in
-                    
-                    
-                    //Query all chats that exist
-                    let query = PFQuery(className: "Chats")
-//                    query.findObjectsInBackgroundWithBlock {
-//                        (objects:[AnyObject]?, error:NSError?) -> Void in
-//                        print("objects is \(objects)")
-//                        if let objs = objects {
-//                            for object in objs {
-//                                let objectId = object.objectId as String!
-//                                print("chatObjId is \(objectId)")
-//                                self.newSeecretIdArray.append(objectId)
-//                                self.newSeecretNameArray.append(object["chatTitle"] as! String)
-//                            }
-//                            print("the amount of things in resultsNameArray2 is \(self.newSeecretIdArray.count)")
-//                            print("the chatsIdArray is \(self.newSeecretIdArray)")
-//                            let randomIndex = Int(arc4random_uniform(UInt32(self.newSeecretIdArray.count)))
-//                            
-//                            print("the random number is \(randomIndex)")
-//                            print("the random selection is \(self.newSeecretNameArray[randomIndex])")
-//                            
-//                            self.mySeecretIdArray.append(self.newSeecretIdArray[randomIndex])
-//                            self.mySeecretNameArray.append(self.newSeecretNameArray[randomIndex])
-//                            
-//                            let seecretObj = PFObject(className: "Seecrets")
-//                            seecretObj["viewerObjectId"] = userObjectID
-//                            seecretObj["viewerUsername"] = userName
-//                            seecretObj["chatTitle"] = self.newSeecretNameArray[randomIndex] as String
-//                            seecretObj["chatObjectId"] = self.newSeecretIdArray[randomIndex] as String
-//                            
-//                            seecretObj.saveInBackground()
-//                            self.resultsTable.reloadData()
-//                        }
-//                        
-//                    }
-                    
-                    
-                    self.seecretCount++
-                    print("seecret count is now \(self.seecretCount)")
-                    
-                    
-                }))
-                alert.addAction(UIAlertAction(title: "Nevermind", style: .Default, handler: {
-                    (action) -> Void in
-                }))
-                self.presentViewController(alert, animated: true, completion: nil)
-            } else {
-                // Fallback on earlier versions
-            }
+            let alert = UIAlertController(title: "New Seecret", message: "As a basic user, you may have 1 seecret at a time.", preferredStyle: UIAlertControllerStyle.Alert)
+            alert.addAction(UIAlertAction(title: "Get my seecret!", style: .Default, handler: {
+                (action) -> Void in
+                
+                
+                //Query all chats that exist
+                let query = PFQuery(className: "Chats")
+                //                    query.findObjectsInBackgroundWithBlock {
+                //                        (objects:[AnyObject]?, error:NSError?) -> Void in
+                //                        print("objects is \(objects)")
+                //                        if let objs = objects {
+                //                            for object in objs {
+                //                                let objectId = object.objectId as String!
+                //                                print("chatObjId is \(objectId)")
+                //                                self.newSeecretIdArray.append(objectId)
+                //                                self.newSeecretNameArray.append(object["chatTitle"] as! String)
+                //                            }
+                //                            print("the amount of things in resultsNameArray2 is \(self.newSeecretIdArray.count)")
+                //                            print("the chatsIdArray is \(self.newSeecretIdArray)")
+                //                            let randomIndex = Int(arc4random_uniform(UInt32(self.newSeecretIdArray.count)))
+                //
+                //                            print("the random number is \(randomIndex)")
+                //                            print("the random selection is \(self.newSeecretNameArray[randomIndex])")
+                //
+                //                            self.mySeecretIdArray.append(self.newSeecretIdArray[randomIndex])
+                //                            self.mySeecretNameArray.append(self.newSeecretNameArray[randomIndex])
+                //
+                //                            let seecretObj = PFObject(className: "Seecrets")
+                //                            seecretObj["viewerObjectId"] = userObjectID
+                //                            seecretObj["viewerUsername"] = userName
+                //                            seecretObj["chatTitle"] = self.newSeecretNameArray[randomIndex] as String
+                //                            seecretObj["chatObjectId"] = self.newSeecretIdArray[randomIndex] as String
+                //
+                //                            seecretObj.saveInBackground()
+                //                            self.resultsTable.reloadData()
+                //                        }
+                //
+                //                    }
+                
+                
+                self.seecretCount++
+                print("seecret count is now \(self.seecretCount)")
+                
+                
+            }))
+            alert.addAction(UIAlertAction(title: "Nevermind", style: .Default, handler: {
+                (action) -> Void in
+            }))
+            self.presentViewController(alert, animated: true, completion: nil)
             
             
 /***********************************************************************************************
 //MARK: Is premium, get a seecret and watch out for duplicates
 ***********************************************************************************************/
         } else if accountStatus == "premium" {
-            if #available(iOS 8.0, *) {
-                let alert = UIAlertController(title: "New Seecret", message: "Add another seecret?", preferredStyle: UIAlertControllerStyle.Alert)
-                alert.addAction(UIAlertAction(title: "Get my seecret!", style: .Default, handler: {
-                    (action) -> Void in
-                    
-                    
-                    
-                    let query = PFQuery(className: "Chats")
-//                    query.findObjectsInBackgroundWithBlock {
-//                        (objects:[AnyObject]?, error:NSError?) -> Void in
-//                        if error == nil {
-//                            for object in objects! {
-//                                let objectId = object.objectId as String!
-//                                print("chatObjId ia \(objectId)")
-//                                self.newSeecretIdArray.append(objectId)
-//                                self.newSeecretNameArray.append(object.objectForKey("chatTitle") as! String)
-//                            }
-//                            var randomIndex = Int(arc4random_uniform(UInt32(self.newSeecretIdArray.count)))
-//                            let randomIndexSave = randomIndex
-//                            print("the random number is \(randomIndex)")
-//                            print("the random selection is \(self.newSeecretNameArray[randomIndex])")
-//                            
-//                            self.mySeecretIdArray.append(self.newSeecretIdArray[randomIndex])
-//                            
-//                            //Prevent duplicates in the table list
-//                            //randomNum set at -1. goes through whole seecret list and checks if there is a duplicate. If there is, kicks to true where it will loop through again with the newly tried quantity until it goes through as false
-//                            
-//                            repeat {
-//                                repeat  {
-//                                    if randomIndex == -1 {
-//                                        print("randomindex was at -1")
-//                                        randomIndex = randomIndexSave
-//                                        print("randomindex is now what it was before at \(randomIndex)")
-//                                    }
-//                                    
-//                                    
-//                                    
-//                                    
-//                                    
-//                                    randomIndex = self.preventDuplicates(randomIndex, randomCount: self.mySeecretIdArray.count, seecretArray: self.mySeecretIdArray, downloadedChatArray: self.newSeecretIdArray)
-//                                    
-//                                    
-//                                    
-//                                    
-//                                    
-//                                    
-//                                    
-//                                } while self.randomNum2 == -1
-//                                //new number, randomNum2 is tested
-//                                print("check3")
-//                                var i:Int = 0
-//                                for i = 0; i < self.mySeecretIdArray.count; i++ {
-//                                    
-//                                    print("mySeecretIdArray[\(i)] is \(self.mySeecretIdArray[i])")
-//                                    print("self.newSeecretIdArray[\(self.randomNum2)] is \(self.newSeecretIdArray[self.randomNum2])")
-//                                    
-//                                    
-//                                    
-//                                    
-//                                    
-//                                    if self.mySeecretIdArray[i] as String != self.newSeecretIdArray[self.randomNum2] as String {
-//                                        print("mySeecretIdArray[\(i)] is \(self.mySeecretIdArray[i] as String) and newSeecretIdArray[\(self.randomNum2)] is \(self.newSeecretIdArray[self.randomNum2] as String)")
-//                                        print("duplicate flag is ZERO, exiting loop")
-//                                    } else if self.mySeecretIdArray[i] as String == self.newSeecretIdArray[self.randomNum2] as String {
-//                                        print("mySeecretIdArray[\(i)] is \(self.mySeecretIdArray[i] as String) and newSeecretIdArray[\(self.randomNum2)] is \(self.newSeecretIdArray[self.randomNum2] as String)")
-//                                        self.duplicateSeecret = 1
-//                                        print("duplicate flag is ONE, re-entering loop")
-//                                    }
-//                                }
-//                            } while self.duplicateSeecret == 1
-//                            
-//                            
-//                            print("loop over, final random number is \(randomIndex)")
-//                            print("loop over, final chatId is \(self.newSeecretIdArray[randomIndex])")
-//                            print("loop over, final chatTitle number is \(self.newSeecretNameArray[randomIndex])")
-//                            self.mySeecretIdArray.append(self.newSeecretIdArray[randomIndex])
-//                            self.mySeecretNameArray.append(self.newSeecretNameArray[randomIndex])
-//                            let seecretObj = PFObject(className: "Seecrets")
-//                            seecretObj["viewerObjectId"] = userObjectID
-//                            seecretObj["viewerUsername"] = userName
-//                            seecretObj["chatTitle"] = self.newSeecretNameArray[randomIndex] as String
-//                            seecretObj["chatObjectId"] = self.newSeecretIdArray[randomIndex] as String
-//                            self.seecretCount++
-//                            print("seecret count is now \(self.seecretCount)")
-//                            seecretObj.saveInBackground()
-//                            
-//                        }
-//                    }
-                    
-                    
-                    self.resultsTable.reloadData()
-                    
-                }))
-                alert.addAction(UIAlertAction(title: "Nevermind", style: .Default, handler: {
-                    (action) -> Void in
-                }))
-                self.presentViewController(alert, animated: true, completion: nil)
-            }
-            } else {
-                // Fallback on earlier versions
-            }
-            
+            let alert = UIAlertController(title: "New Seecret", message: "Add another seecret?", preferredStyle: UIAlertControllerStyle.Alert)
+            alert.addAction(UIAlertAction(title: "Get my seecret!", style: .Default, handler: {
+                (action) -> Void in
+                
+                
+                
+                let query = PFQuery(className: "Chats")
+                //                    query.findObjectsInBackgroundWithBlock {
+                //                        (objects:[AnyObject]?, error:NSError?) -> Void in
+                //                        if error == nil {
+                //                            for object in objects! {
+                //                                let objectId = object.objectId as String!
+                //                                print("chatObjId ia \(objectId)")
+                //                                self.newSeecretIdArray.append(objectId)
+                //                                self.newSeecretNameArray.append(object.objectForKey("chatTitle") as! String)
+                //                            }
+                //                            var randomIndex = Int(arc4random_uniform(UInt32(self.newSeecretIdArray.count)))
+                //                            let randomIndexSave = randomIndex
+                //                            print("the random number is \(randomIndex)")
+                //                            print("the random selection is \(self.newSeecretNameArray[randomIndex])")
+                //
+                //                            self.mySeecretIdArray.append(self.newSeecretIdArray[randomIndex])
+                //
+                //                            //Prevent duplicates in the table list
+                //                            //randomNum set at -1. goes through whole seecret list and checks if there is a duplicate. If there is, kicks to true where it will loop through again with the newly tried quantity until it goes through as false
+                //
+                //                            repeat {
+                //                                repeat  {
+                //                                    if randomIndex == -1 {
+                //                                        print("randomindex was at -1")
+                //                                        randomIndex = randomIndexSave
+                //                                        print("randomindex is now what it was before at \(randomIndex)")
+                //                                    }
+                //
+                //
+                //
+                //
+                //
+                //                                    randomIndex = self.preventDuplicates(randomIndex, randomCount: self.mySeecretIdArray.count, seecretArray: self.mySeecretIdArray, downloadedChatArray: self.newSeecretIdArray)
+                //
+                //
+                //
+                //
+                //
+                //
+                //
+                //                                } while self.randomNum2 == -1
+                //                                //new number, randomNum2 is tested
+                //                                print("check3")
+                //                                var i:Int = 0
+                //                                for i = 0; i < self.mySeecretIdArray.count; i++ {
+                //
+                //                                    print("mySeecretIdArray[\(i)] is \(self.mySeecretIdArray[i])")
+                //                                    print("self.newSeecretIdArray[\(self.randomNum2)] is \(self.newSeecretIdArray[self.randomNum2])")
+                //
+                //
+                //
+                //
+                //
+                //                                    if self.mySeecretIdArray[i] as String != self.newSeecretIdArray[self.randomNum2] as String {
+                //                                        print("mySeecretIdArray[\(i)] is \(self.mySeecretIdArray[i] as String) and newSeecretIdArray[\(self.randomNum2)] is \(self.newSeecretIdArray[self.randomNum2] as String)")
+                //                                        print("duplicate flag is ZERO, exiting loop")
+                //                                    } else if self.mySeecretIdArray[i] as String == self.newSeecretIdArray[self.randomNum2] as String {
+                //                                        print("mySeecretIdArray[\(i)] is \(self.mySeecretIdArray[i] as String) and newSeecretIdArray[\(self.randomNum2)] is \(self.newSeecretIdArray[self.randomNum2] as String)")
+                //                                        self.duplicateSeecret = 1
+                //                                        print("duplicate flag is ONE, re-entering loop")
+                //                                    }
+                //                                }
+                //                            } while self.duplicateSeecret == 1
+                //
+                //
+                //                            print("loop over, final random number is \(randomIndex)")
+                //                            print("loop over, final chatId is \(self.newSeecretIdArray[randomIndex])")
+                //                            print("loop over, final chatTitle number is \(self.newSeecretNameArray[randomIndex])")
+                //                            self.mySeecretIdArray.append(self.newSeecretIdArray[randomIndex])
+                //                            self.mySeecretNameArray.append(self.newSeecretNameArray[randomIndex])
+                //                            let seecretObj = PFObject(className: "Seecrets")
+                //                            seecretObj["viewerObjectId"] = userObjectID
+                //                            seecretObj["viewerUsername"] = userName
+                //                            seecretObj["chatTitle"] = self.newSeecretNameArray[randomIndex] as String
+                //                            seecretObj["chatObjectId"] = self.newSeecretIdArray[randomIndex] as String
+                //                            self.seecretCount++
+                //                            print("seecret count is now \(self.seecretCount)")
+                //                            seecretObj.saveInBackground()
+                //                            
+                //                        }
+                //                    }
+                
+                
+                self.resultsTable.reloadData()
+                
+            }))
+            alert.addAction(UIAlertAction(title: "Nevermind", style: .Default, handler: {
+                (action) -> Void in
+            }))
+            self.presentViewController(alert, animated: true, completion: nil)
+        }
     }
 
     
@@ -421,17 +408,7 @@ class seecretsVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     }
     
-
-    
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-    
 }
-
-
-/***********************************************************************************************
-//MARK: CODE CLOSET
-***********************************************************************************************/
-

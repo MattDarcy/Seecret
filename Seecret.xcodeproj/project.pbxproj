@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0A0535341BBABC6F0055AE33 /* hamburger.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A0535331BBABC6F0055AE33 /* hamburger.png */; };
+		0A55C45D1EDD022700C08146 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A55C45C1EDD022700C08146 /* StoreKit.framework */; };
 		0A99B7DA1EDC8CFE00178EDE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A99B7D91EDC8CFE00178EDE /* libz.tbd */; };
 		0A99B7DC1EDC8D5600178EDE /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A99B7DB1EDC8D5600178EDE /* libsqlite3.tbd */; };
 		0AB431771BC795C600A090B5 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB431761BC795C600A090B5 /* Chat.swift */; };
@@ -31,7 +32,6 @@
 		A114487B1B7DB03100B2EEF5 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A114487A1B7DB03100B2EEF5 /* MobileCoreServices.framework */; };
 		A114487D1B7DB03A00B2EEF5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A114487C1B7DB03A00B2EEF5 /* QuartzCore.framework */; };
 		A114487F1B7DB04200B2EEF5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A114487E1B7DB04200B2EEF5 /* Security.framework */; };
-		A11448811B7DB04C00B2EEF5 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11448801B7DB04C00B2EEF5 /* StoreKit.framework */; };
 		A11448831B7DB05300B2EEF5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11448821B7DB05300B2EEF5 /* SystemConfiguration.framework */; };
 		A11448861B7DB09C00B2EEF5 /* SeecretHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = A11448851B7DB09C00B2EEF5 /* SeecretHeader.m */; };
 		A11448881B7DD47600B2EEF5 /* friendsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11448871B7DD47600B2EEF5 /* friendsVC.swift */; };
@@ -52,14 +52,8 @@
 		A1B601921B9847C9004943E3 /* appicon.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601891B9847C9004943E3 /* appicon.png */; };
 		A1B601931B9847C9004943E3 /* plusminus.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B6018A1B9847C9004943E3 /* plusminus.png */; };
 		A1B601941B9847C9004943E3 /* morepics3.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B6018B1B9847C9004943E3 /* morepics3.png */; };
-		A1B601CA1B984961004943E3 /* ic_launcher.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B6019C1B984961004943E3 /* ic_launcher.png */; };
-		A1B601CB1B984961004943E3 /* ic_launcher.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B6019E1B984961004943E3 /* ic_launcher.png */; };
-		A1B601CC1B984961004943E3 /* ic_launcher.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601A01B984961004943E3 /* ic_launcher.png */; };
-		A1B601CD1B984961004943E3 /* ic_launcher.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601A21B984961004943E3 /* ic_launcher.png */; };
-		A1B601CE1B984961004943E3 /* ic_launcher.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601A41B984961004943E3 /* ic_launcher.png */; };
 		A1B601CF1B984961004943E3 /* ic_launcher.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601A61B984961004943E3 /* ic_launcher.png */; };
 		A1B601D01B984961004943E3 /* playstore-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601A71B984961004943E3 /* playstore-icon.png */; };
-		A1B601D11B984961004943E3 /* Contents.json in Resources */ = {isa = PBXBuildFile; fileRef = A1B601AA1B984961004943E3 /* Contents.json */; };
 		A1B601D21B984961004943E3 /* Icon-40.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601AB1B984961004943E3 /* Icon-40.png */; };
 		A1B601D31B984961004943E3 /* Icon-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601AC1B984961004943E3 /* Icon-40@2x.png */; };
 		A1B601D41B984961004943E3 /* Icon-40@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601AD1B984961004943E3 /* Icon-40@3x.png */; };
@@ -79,13 +73,11 @@
 		A1B601E21B984961004943E3 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601BB1B984961004943E3 /* Icon@2x.png */; };
 		A1B601E31B984961004943E3 /* iTunesArtwork.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601BC1B984961004943E3 /* iTunesArtwork.png */; };
 		A1B601E41B984961004943E3 /* iTunesArtwork@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601BD1B984961004943E3 /* iTunesArtwork@2x.png */; };
-		A1B601E51B984961004943E3 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = A1B601BE1B984961004943E3 /* README.md */; };
 		A1B601E61B984961004943E3 /* Contents.json in Resources */ = {isa = PBXBuildFile; fileRef = A1B601C11B984961004943E3 /* Contents.json */; };
 		A1B601E71B984961004943E3 /* Icon-24@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601C21B984961004943E3 /* Icon-24@2x.png */; };
 		A1B601E81B984961004943E3 /* Icon-27.5@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601C31B984961004943E3 /* Icon-27.5@2x.png */; };
 		A1B601E91B984961004943E3 /* Icon-29@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601C41B984961004943E3 /* Icon-29@2x.png */; };
 		A1B601EA1B984961004943E3 /* Icon-29@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601C51B984961004943E3 /* Icon-29@3x.png */; };
-		A1B601EB1B984961004943E3 /* Icon-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601C61B984961004943E3 /* Icon-40@2x.png */; };
 		A1B601EC1B984961004943E3 /* Icon-44@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601C71B984961004943E3 /* Icon-44@2x.png */; };
 		A1B601ED1B984961004943E3 /* Icon-86@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601C81B984961004943E3 /* Icon-86@2x.png */; };
 		A1B601EE1B984961004943E3 /* Icon-98@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B601C91B984961004943E3 /* Icon-98@2x.png */; };
@@ -111,6 +103,7 @@
 
 /* Begin PBXFileReference section */
 		0A0535331BBABC6F0055AE33 /* hamburger.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hamburger.png; sourceTree = "<group>"; };
+		0A55C45C1EDD022700C08146 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		0A99B7D91EDC8CFE00178EDE /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		0A99B7DB1EDC8D5600178EDE /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		0AB431761BC795C600A090B5 /* Chat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Chat.swift; path = ../Chat.swift; sourceTree = "<group>"; };
@@ -141,7 +134,6 @@
 		A114487A1B7DB03100B2EEF5 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		A114487C1B7DB03A00B2EEF5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		A114487E1B7DB04200B2EEF5 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		A11448801B7DB04C00B2EEF5 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		A11448821B7DB05300B2EEF5 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		A11448841B7DB09C00B2EEF5 /* Seecret-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Seecret-Bridging-Header.h"; sourceTree = "<group>"; };
 		A11448851B7DB09C00B2EEF5 /* SeecretHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SeecretHeader.m; sourceTree = "<group>"; };
@@ -219,7 +211,6 @@
 				0A99B7DC1EDC8D5600178EDE /* libsqlite3.tbd in Frameworks */,
 				0A99B7DA1EDC8CFE00178EDE /* libz.tbd in Frameworks */,
 				A11448831B7DB05300B2EEF5 /* SystemConfiguration.framework in Frameworks */,
-				A11448811B7DB04C00B2EEF5 /* StoreKit.framework in Frameworks */,
 				A114487F1B7DB04200B2EEF5 /* Security.framework in Frameworks */,
 				A114487D1B7DB03A00B2EEF5 /* QuartzCore.framework in Frameworks */,
 				A114487B1B7DB03100B2EEF5 /* MobileCoreServices.framework in Frameworks */,
@@ -228,6 +219,7 @@
 				A11448711B7DAFF500B2EEF5 /* CFNetwork.framework in Frameworks */,
 				A114486F1B7DAFEF00B2EEF5 /* AudioToolbox.framework in Frameworks */,
 				A114486C1B7DAFD000B2EEF5 /* Parse.framework in Frameworks */,
+				0A55C45D1EDD022700C08146 /* StoreKit.framework in Frameworks */,
 				A114486B1B7DAFD000B2EEF5 /* Bolts.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -361,10 +353,10 @@
 		A114486D1B7DAFD900B2EEF5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0A55C45C1EDD022700C08146 /* StoreKit.framework */,
 				0A99B7DB1EDC8D5600178EDE /* libsqlite3.tbd */,
 				0A99B7D91EDC8CFE00178EDE /* libz.tbd */,
 				A11448821B7DB05300B2EEF5 /* SystemConfiguration.framework */,
-				A11448801B7DB04C00B2EEF5 /* StoreKit.framework */,
 				A114487E1B7DB04200B2EEF5 /* Security.framework */,
 				A114487C1B7DB03A00B2EEF5 /* QuartzCore.framework */,
 				A114487A1B7DB03100B2EEF5 /* MobileCoreServices.framework */,
@@ -617,6 +609,11 @@
 					A114483F1B7DA90F00B2EEF5 = {
 						CreatedOnToolsVersion = 6.3;
 						DevelopmentTeam = AP86GREZ89;
+						SystemCapabilities = {
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
+						};
 					};
 					A11448541B7DA90F00B2EEF5 = {
 						CreatedOnToolsVersion = 6.3;
@@ -651,8 +648,6 @@
 			files = (
 				A1B601931B9847C9004943E3 /* plusminus.png in Resources */,
 				A18BFE241B9A7EDA00A94A37 /* Main.storyboard in Resources */,
-				A1B601CE1B984961004943E3 /* ic_launcher.png in Resources */,
-				A1B601EB1B984961004943E3 /* Icon-40@2x.png in Resources */,
 				A1B601DA1B984961004943E3 /* Icon-Small@2x.png in Resources */,
 				A1B601EE1B984961004943E3 /* Icon-98@2x.png in Resources */,
 				A18BFE211B9A7D2700A94A37 /* ee.png in Resources */,
@@ -668,16 +663,13 @@
 				A1B601E91B984961004943E3 /* Icon-29@2x.png in Resources */,
 				A1B601E41B984961004943E3 /* iTunesArtwork@2x.png in Resources */,
 				A1B601ED1B984961004943E3 /* Icon-86@2x.png in Resources */,
-				A1B601CB1B984961004943E3 /* ic_launcher.png in Resources */,
 				A1B601941B9847C9004943E3 /* morepics3.png in Resources */,
-				A1B601CA1B984961004943E3 /* ic_launcher.png in Resources */,
 				A1B601DD1B984961004943E3 /* Icon-72.png in Resources */,
 				A1B601E21B984961004943E3 /* Icon@2x.png in Resources */,
 				A11448501B7DA90F00B2EEF5 /* LaunchScreen.xib in Resources */,
 				A114484D1B7DA90F00B2EEF5 /* Images.xcassets in Resources */,
 				A1B601E01B984961004943E3 /* Icon-Small-50@2x.png in Resources */,
 				A18BFE181B9A7B1C00A94A37 /* settings.png in Resources */,
-				A1B601CD1B984961004943E3 /* ic_launcher.png in Resources */,
 				A1B601D71B984961004943E3 /* Icon-76.png in Resources */,
 				A1B601E11B984961004943E3 /* Icon.png in Resources */,
 				A1B601D81B984961004943E3 /* Icon-76@2x.png in Resources */,
@@ -694,11 +686,9 @@
 				A1B601EA1B984961004943E3 /* Icon-29@3x.png in Resources */,
 				A18BFE1F1B9A7D2700A94A37 /* bubble.png in Resources */,
 				A1B601E31B984961004943E3 /* iTunesArtwork.png in Resources */,
-				A1B601CC1B984961004943E3 /* ic_launcher.png in Resources */,
 				A1B601D61B984961004943E3 /* Icon-60@3x.png in Resources */,
 				A1B601D21B984961004943E3 /* Icon-40.png in Resources */,
 				A1B601D41B984961004943E3 /* Icon-40@3x.png in Resources */,
-				A1B601D11B984961004943E3 /* Contents.json in Resources */,
 				A18BFE201B9A7D2700A94A37 /* bubbles.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -774,7 +764,6 @@
 				A11448881B7DD47600B2EEF5 /* friendsVC.swift in Sources */,
 				0AD6DF5A1BBBEEFB0035DD2F /* SWRevealViewController.m in Sources */,
 				C781173C1BE0AE0500000CB3 /* chatParticipantCell.swift in Sources */,
-				A1B601E51B984961004943E3 /* README.md in Sources */,
 				A1ABF1541B8EF4F400C22BEA /* chatsVC.swift in Sources */,
 				A11448481B7DA90F00B2EEF5 /* loginVC.swift in Sources */,
 				0AD0EAF51BC26BB1000EC56C /* SeecretCoreDataModel.xcdatamodeld in Sources */,
