@@ -375,9 +375,6 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
         }
     }
     
-
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         print("viewDidLoad")
@@ -385,10 +382,6 @@ class conversationVC: UIViewController, UIScrollViewDelegate, UITextViewDelegate
         addBurgerBtn()
         //identify what kind of chat participant the current user is in this chat.
         print("userParticipantType is \(userParticipantType)")
-        
-
-        
-        
         
         scrollViewOriginalY = self.resultsScrollView.frame.origin.y
         frameMessageOriginalY = self.frameMessageView.frame.origin.y

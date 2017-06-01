@@ -308,14 +308,14 @@
 			isa = PBXGroup;
 			children = (
 				A11448451B7DA90F00B2EEF5 /* AppDelegate.swift */,
+				A114484E1B7DA90F00B2EEF5 /* LaunchScreen.xib */,
+				A18BFE221B9A7EDA00A94A37 /* Main.storyboard */,
 				A17949BF1B99693000284BE1 /* Login/Signup/Logout */,
 				A17949C01B99694200284BE1 /* Friends */,
 				A17949C21B99695F00284BE1 /* Chats */,
 				A17949C31B99697900284BE1 /* Seecrets */,
-				A114484C1B7DA90F00B2EEF5 /* Images.xcassets */,
-				A114484E1B7DA90F00B2EEF5 /* LaunchScreen.xib */,
-				A18BFE221B9A7EDA00A94A37 /* Main.storyboard */,
 				0AD0EAEF1BC25918000EC56C /* SeecretDataModel */,
+				A114484C1B7DA90F00B2EEF5 /* Images.xcassets */,
 				A11448431B7DA90F00B2EEF5 /* Supporting Files */,
 			);
 			path = Seecret;

@@ -340,13 +340,8 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate, NSF
                 self.resultsTable.reloadData()
                 self.resumeApp()
             })
-
         }
-
-    
-
      //   self.coreDataContent = true
-        
     }
     
     
@@ -387,16 +382,11 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate, NSF
             (imageData:NSData?, error:NSError?) -> Void in
             
             if error == nil {
-                
                 let image = UIImage(data: imageData!)
                 cell.profileImageView.image = image
-                
             }
-            
         }
     
-
-   
         return cell
     }
     
@@ -414,7 +404,6 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate, NSF
         var cell = tableView.cellForRowAtIndexPath(indexPath) as! chatsCell
         self.chatIdToFetch = self.resultsObjectIds[indexPath.row]
         self.performSegueWithIdentifier("goToConversationVC2", sender: self)
-        
     }
     
     
@@ -422,76 +411,67 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate, NSF
 //MARK: Create a new chat
 ***********************************************************************************************/
     func addChatBtn_click() {
-//Prime example of clicking a button and editing text in a dialogue box
-        
-        if #available(iOS 8.0, *) {
-            let alert = UIAlertController(title: "New Chat", message: "Type the name of the chat", preferredStyle: UIAlertControllerStyle.Alert)
-            alert.addTextFieldWithConfigurationHandler { (textField) -> Void in
-                
-            }
-            alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: {
-                (action) -> Void in
-                
-                
-                let textF = alert.textFields![0] //first field
-                
-                let chatObj = PFObject(className: "Chats")
-                chatObj["chatParticipantIds"] = [self.userObjectID]
-                chatObj["chatParticipantDisplayNames"] = [self.userDisplayName]
-                chatObj["chatTitle"] = textF.text
-                chatObj["adminIds"] = [self.userObjectID]
-                //chatObj["adminUsernames"] = [userName]
-                
-                
-                //instead of a simple save, we do a block in order to capture the objectId within the same transaction
-                //send an initial message to the chat
-                chatObj.saveInBackgroundWithBlock({
-                    (succeeded, error:NSError?) -> Void in
-                    if error == nil {
-                        if let chatId = chatObj.objectId! as String! {
-                            self.chatIdToFetch = chatId
-                            print("check1")
-                            let msgObj = PFObject(className: "Messages")
-                            msgObj["chatObjectId"] = chatId
-                            msgObj["chatTitle"] = textF.text
-                            msgObj["senderObjectId"] = self.userObjectID
-                            //        msgObj["senderUsername"] = userName
-                            msgObj["messageText"] = "The group has been created: \(textF.text)"
-                            msgObj.saveInBackground()
-                            //and also save this chat id in the user class to say that this user has participation rights
-                            let predicate = NSPredicate(format: "objectId = '"+self.userObjectID+"'")
-                            let chatObj2 = PFQuery(className: "_User", predicate: predicate)
-//                            chatObj2.findObjectsInBackgroundWithBlock({
-//                                (objects:[AnyObject]?, error:NSError?) -> Void in
-//                                if error == nil {
-//                                    if let objs = objects {
-//                                        for object in objs {
-//                                            object.addUniqueObject(chatId, forKey: "chatObjectIds")
-//                                            object.saveInBackground()
-//                                        }
-//                                    }
-//                                    self.performSegueWithIdentifier("goToConversationVC2", sender: self)
-//                                }
-//                            })
-                        }
-                    }
-                })
-                
-                
-            }))
+        let alert = UIAlertController(title: "New Chat", message: "Type the name of the chat", preferredStyle: UIAlertControllerStyle.Alert)
+        alert.addTextFieldWithConfigurationHandler { (textField) -> Void in
             
-            alert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: {
-                (action) -> Void in
-                
-            }))
-            
-            
-            self.presentViewController(alert, animated: true, completion: nil)
-
-        } else {
-            // Fallback on earlier versions
         }
-
+        alert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: {
+            (action) -> Void in
+            
+            
+            let textF = alert.textFields![0] //first field
+            
+            let chatObj = PFObject(className: "Chats")
+            chatObj["chatParticipantIds"] = [self.userObjectID]
+            chatObj["chatParticipantDisplayNames"] = [self.userDisplayName]
+            chatObj["chatTitle"] = textF.text
+            chatObj["adminIds"] = [self.userObjectID]
+            //chatObj["adminUsernames"] = [userName]
+            
+            
+            //instead of a simple save, we do a block in order to capture the objectId within the same transaction
+            //send an initial message to the chat
+            chatObj.saveInBackgroundWithBlock({
+                (succeeded, error:NSError?) -> Void in
+                if error == nil {
+                    if let chatId = chatObj.objectId! as String! {
+                        self.chatIdToFetch = chatId
+                        print("check1")
+                        let msgObj = PFObject(className: "Messages")
+                        msgObj["chatObjectId"] = chatId
+                        msgObj["chatTitle"] = textF.text
+                        msgObj["senderObjectId"] = self.userObjectID
+                        //        msgObj["senderUsername"] = userName
+                        msgObj["messageText"] = "The group has been created: \(textF.text)"
+                        msgObj.saveInBackground()
+                        //and also save this chat id in the user class to say that this user has participation rights
+                        let predicate = NSPredicate(format: "objectId = '"+self.userObjectID+"'")
+                        let chatObj2 = PFQuery(className: "_User", predicate: predicate)
+                        //                            chatObj2.findObjectsInBackgroundWithBlock({
+                        //                                (objects:[AnyObject]?, error:NSError?) -> Void in
+                        //                                if error == nil {
+                        //                                    if let objs = objects {
+                        //                                        for object in objs {
+                        //                                            object.addUniqueObject(chatId, forKey: "chatObjectIds")
+                        //                                            object.saveInBackground()
+                        //                                        }
+                        //                                    }
+                        //                                    self.performSegueWithIdentifier("goToConversationVC2", sender: self)
+                        //                                }
+                        //                            })
+                    }
+                }
+            })
+            
+            
+        }))
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: {
+            (action) -> Void in
+            
+        }))
+        
+        self.presentViewController(alert, animated: true, completion: nil)
     }
     
 /***********************************************************************************************
@@ -502,9 +482,7 @@ class chatsVC: UIViewController, UITableViewDataSource, UITableViewDelegate, NSF
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        
     }
-    
 }
 
 /***********************************************************************************************
