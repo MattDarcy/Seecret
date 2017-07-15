@@ -1,0 +1,10 @@
+{
+  "apps": [{
+    "serverURL": "https://seecretserver.herokuapp.com/parse",
+    "appId": "kuAesCGyirSULqKqgqIw",
+    "masterKey": "tXXWzwP5gAupgRtaRA2i",
+    "appName": "Seecret Server",
+    "iconName": ""
+  }],
+  "iconsFolder": "icons"
+}
